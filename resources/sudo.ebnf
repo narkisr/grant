@@ -4,14 +4,21 @@ NAME ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
 
 Cmnd_Alias ::= NAME '=' Cmnd_List  |  NAME '=' '\\' '\n' Cmnd_List
 
-file ::= #'(/[a-zA-Z0-9_-]+)+'
+file     ::= #'(/[a-zA-Z0-9_-]+)+'
 
-directory ::= #'(/[a-zA-Z0-9_-]+)+/'
+wildcard ::= #'\?|\*|\+'
 
-Cmnd_List ::= Cmnd |
-               Cmnd ',' Cmnd_List
+flag = #'\-[a-z]'
 
-commandname ::= file | file ','
+directory ::= #'(/[a-zA-Z0-9_-]+)+/(\?|\*|\+)?'
+
+args = (wildcard | flag)+
+
+commandname ::= file |
+                file args |
+                file args '""'
+
+Cmnd_List ::= (Cmnd | Cmnd ',' | Cmnd {','} '\\')+
 
 Cmnd ::= '!'* commandname |
           '!'* directory |

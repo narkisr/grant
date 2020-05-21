@@ -18,6 +18,5 @@
   (re-matches #"^/|(/[a-zA-Z0-9_-]+)+/[a-zA-Z0-9_-]+$" "/usr/bin/ls")
   (clojure.pprint/pprint (sudoers (slurp "test/resources/re-ops")))
   (clojure.pprint/pprint (sudoers "/usr/bin /bla/bla "))
-  (clojure.pprint/pprint (sudoers "Cmnd_Alias F = \\ \n"))
-  (clojure.pprint/pprint (sudoers "Cmnd_Alias F = \\ \n /bin/foo")))
+  (clojure.pprint/pprint (sudoers "Cmnd_Alias F = \\ \n /bin/foo , /foo/bar , /bla/bla -a * , /bin/*\\")))
 
