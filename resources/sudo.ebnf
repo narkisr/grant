@@ -1,0 +1,19 @@
+Alias ::= 'Cmnd_Alias' Cmnd_Alias (':' Cmnd_Alias)*
+
+NAME ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
+
+Cmnd_Alias ::= NAME '=' Cmnd_List  |  NAME '=' '\\' '\n' Cmnd_List
+
+file ::= #'(/[a-zA-Z0-9_-]+)+'
+
+directory ::= #'(/[a-zA-Z0-9_-]+)+/'
+
+Cmnd_List ::= Cmnd |
+               Cmnd ',' Cmnd_List
+
+commandname ::= file | file ','
+
+Cmnd ::= '!'* commandname |
+          '!'* directory |
+          '!'* "sudoedit" |
+          '!'* Cmnd_Alias

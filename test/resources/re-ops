@@ -1,0 +1,48 @@
+Cmnd_Alias C_PIPES = \
+     /usr/bin/tee *, /usr/bin/tee -a *, \
+     /usr/bin/sed -i *, \
+     /usr/bin/tail -f /var/log/*
+
+Cmnd_Alias C_PKG = \
+     /usr/bin/apt update, /usr/bin/apt upgrade -y, \
+     /usr/bin/apt-cleanup, /usr/bin/apt install * -y, \
+     /usr/bin/env DEBIAN_FRONTEND=noninteractive /usr/bin/apt install * -y, \
+     /usr/bin/apt-get install -f, /usr/bin/add-apt-repository * -y, \
+     /usr/bin/apt-key add *, /usr/bin/dpkg -i *, \
+     /usr/bin/env DEBIAN_FRONTEND=noninteractive /usr/bin/dpkg -i *, \
+     /usr/bin/debconf-set-selections
+
+Cmnd_Alias C_KERNEL = \
+     /usr/bin/purge-kernels, \
+     /usr/sbin/sysctl --system
+
+Cmnd_Alias C_SERVICE = \
+     /usr/sbin/service * stop, \
+     /usr/sbin/service * start, \
+     /usr/sbin/service * restart, \
+     /usr/sbin/service * status
+
+Cmnd_Alias C_SYSTEMCTL = \
+     /bin/systemctl enable *, \
+     /bin/systemctl disable *
+
+Cmnd_Alias C_USER = \
+     /usr/bin/chsh -s /usr/bin/zsh *, \
+     /usr/sbin/usermod -G * -a *
+
+Cmnd_Alias C_SECURITY= \
+     /usr/sbin/ufw status, \
+     /usr/bin/nmap *, \
+     /usr/bin/netstat *, \
+     /usr/bin/setfacl *
+
+Cmnd_Alias C_DISK= \
+     /usr/sbin/parted * --script -- mklabel *, \
+     /usr/sbin/parted -s -a optimal -- * mkpart primary 0 -1, \
+     /usr/sbin/mkfs.ext4 * -F, \
+     /usr/bin/mount *
+
+Cmnd_Alias C_VIRTUAL= \
+     /usr/bin/lxd init --auto
+
+re-ops ALL=NOPASSWD: C_PIPES, C_PKG, C_KERNEL, C_SERVICE, C_SYSTEMCTL, C_USER, C_SECURITY, C_VIRTUAL, C_DISK
