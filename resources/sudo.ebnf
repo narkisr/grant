@@ -1,8 +1,9 @@
-Alias ::= ('Cmnd_Alias' Cmnd_Alias)* | #'\s*\n' 
+alias ::= ('Cmnd_Alias' cmnd-alias)* | #'\s*\n' 
  
-NAME ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
+(* Command aliases *)
+name ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
 
-Cmnd_Alias ::= NAME '=' Cmnd_List  |  NAME '=' '\\' '\n' Cmnd_List
+cmnd-alias ::= name '=' cmnd-list  |  name '=' '\\' '\n' cmnd-list
 
 file ::= #'(/[a-zA-Z0-9_-[.]]+)+'
 
@@ -16,10 +17,25 @@ end-of-options = '--'
 
 directory ::= #'(/[a-zA-Z0-9_-]+)+/(\?|\*|\+)?'
 
-args = (wildcard | flag | arg)+
+commandname ::= file+ (wildcard | flag | arg | file | '""'  | end-of-options)*
 
-commandname ::= file (args | file | '""'  | end-of-options)*
+cmnd-list ::= (cmnd {','} | cmnd {','} '\\' '\n' | cmnd '\n')+
 
-Cmnd_List ::= (Cmnd {','} | Cmnd {','} '\\' '\n' | Cmnd '\n')+
+cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* cmnd-alias)+ (#'\s*\n')*
 
-Cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* Cmnd_Alias)+ (#'\s*\n')*
+(* User Spec *)
+
+User ::= name
+
+User_List ::= User | User ',' User_List
+
+(* Host_List ::= Host |
+              Host ',' Host_List
+
+Host ::= '!'* hostname |
+         '!'* ip_addr |
+         '!'* network(/netmask)? |
+         '!'* +netgroup |
+         '!'* Host_Alias *)
+
+(* User_Spec ::= User_List Host_List '=' Cmnd_Spec_List \ (':' Host_List '=' Cmnd_Spec_List) *)
