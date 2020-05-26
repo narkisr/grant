@@ -1,26 +1,25 @@
-Alias ::= 'Cmnd_Alias' Cmnd_Alias (':' Cmnd_Alias)*
-
+Alias ::= ('Cmnd_Alias' Cmnd_Alias)* | #'\s*\n' 
+ 
 NAME ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
 
 Cmnd_Alias ::= NAME '=' Cmnd_List  |  NAME '=' '\\' '\n' Cmnd_List
 
-file     ::= #'(/[a-zA-Z0-9_-]+)+'
+file ::= #'(/[a-zA-Z0-9_-[.]]+)+'
 
 wildcard ::= #'\?|\*|\+'
 
-flag = #'\-[a-z]'
+flag = (#'\-\w+' | #'\--\w+')
+
+arg = #'(\w|\d|\_|\=)+'
+
+end-of-options = '--'
 
 directory ::= #'(/[a-zA-Z0-9_-]+)+/(\?|\*|\+)?'
 
-args = (wildcard | flag)+
+args = (wildcard | flag | arg)+
 
-commandname ::= file |
-                file args |
-                file args '""'
+commandname ::= file (args | file | '""'  | end-of-options)*
 
-Cmnd_List ::= (Cmnd | Cmnd ',' | Cmnd {','} '\\')+
+Cmnd_List ::= (Cmnd {','} | Cmnd {','} '\\' '\n' | Cmnd '\n')+
 
-Cmnd ::= '!'* commandname |
-          '!'* directory |
-          '!'* "sudoedit" |
-          '!'* Cmnd_Alias
+Cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* Cmnd_Alias)+ (#'\s*\n')*
