@@ -1,9 +1,12 @@
-alias ::= ('Cmnd_Alias' cmnd-alias)* | #'\s*\n' 
+(* User spec *)
+sudoers ::= ('Cmnd_Alias' cmnd-alias | user-spec )*
+
+user-spec ::= user-list host-list '=' cmnd-spec-list (':' host-list '=' cmnd-spec-list)*
  
 (* Command aliases *)
-name ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
+alias-name ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
 
-cmnd-alias ::= name '=' cmnd-list  |  name '=' '\\' '\n' cmnd-list
+cmnd-alias ::= alias-name '=' cmnd-list  |  alias-name '=' '\\' '\n' cmnd-list
 
 file ::= #'(/[a-zA-Z0-9_-[.]]+)+'
 
@@ -21,21 +24,68 @@ commandname ::= file+ (wildcard | flag | arg | file | '""'  | end-of-options)*
 
 cmnd-list ::= (cmnd {','} | cmnd {','} '\\' '\n' | cmnd '\n')+
 
-cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* cmnd-alias)+ (#'\s*\n')*
+cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* alias-name)+ (#'\s*\n')*
+
+
+(* Runas *)
+
+name = #'([A-Z]|[a-z]|[0-9]|\_|\-)+'
+
+runas-alias ::= name '=' runas-list
+
+runas-list ::= runas-member | runas-member ',' runas-list
+
+uid = #'\d+'
+
+gid = #'\d+'
+
+nonunix_group = gid
+
+nonunix_gid = uid
+
+netgroup = gid
+
+group = name
+
+runas-member ::= '!'* user |
+                 '!'* '#' uid |
+                 '!'* '%' group |
+                 '!'* '%#' gid |
+                 '!'* '%:' nonunix_group |
+                 '!'* '%:#' nonunix_gid |
+                 '!'* '+' netgroup |
+                 '!'* alias-name
 
 (* User Spec *)
 
-User ::= name
+user ::= #'(\w|\d|\_|\-)+'
 
-User_List ::= User | User ',' User_List
+user-list ::= user | user ',' user-list
 
-(* Host_List ::= Host |
-              Host ',' Host_List
+(* host spec *)
 
-Host ::= '!'* hostname |
-         '!'* ip_addr |
+ip_addr = #'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+
+hostname ::= #'([A-Z]|[a-z]|[0-9]|\_|\-)+'
+
+host ::= '!'* hostname |
+         '!'* ip_addr (*|
          '!'* network(/netmask)? |
          '!'* +netgroup |
          '!'* Host_Alias *)
 
-(* User_Spec ::= User_List Host_List '=' Cmnd_Spec_List \ (':' Host_List '=' Cmnd_Spec_List) *)
+host-list ::= host | host ',' host-list
+
+cmnd-spec-list ::= (cmnd-spec | cmnd-spec ',')+ 
+
+cmnd-spec ::= runas-spec? selinux-spec? tag-spec* cmnd
+
+runas-spec ::= '(' runas-list? (':' runas-list)? ')'
+
+selinux-spec ::= ('ROLE=role' | 'TYPE=type')
+
+tag-spec ::= ('EXEC:' | 'NOEXEC:' | 'FOLLOW:' | 'NOFOLLOW' |
+              'LOG_INPUT:' | 'NOLOG_INPUT:' | 'LOG_OUTPUT:' |
+              'NOLOG_OUTPUT:' | 'MAIL:' | 'NOMAIL:' | 'PASSWD:' |
+              'NOPASSWD:' | 'SETENV:' | 'NOSETENV:')
+
