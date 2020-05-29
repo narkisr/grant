@@ -1,37 +1,31 @@
 (ns user
   (:refer-clojure :exclude  [update list])
-  (:require 
-    [clojure.tools.namespace.repl :refer (refresh refresh-all)]
-    [clojure.test]
-    )
-  )
-
+  (:require
+   [clojure.tools.namespace.repl :refer (refresh refresh-all)]
+   [clojure.test]))
 
 (defn start-
   "Starts the current development system."
-  []
-  )
+  [])
 
 (defn stop
   "Shuts down and destroys the current development system."
-  []
-  )
+  [])
 
 (defn go
   "Initializes the current development system and starts it running."
   []
-  (start-)
-  )
+  (start-))
 
 (defn reset []
   (stop)
   (refresh :after 'user/go))
 
 (defn require-tests []
-  (require 'grant.test))
+  (require 'grant.test.parsing))
 
 (defn run-tests []
-  (clojure.test/run-tests 'grant.test))
+  (clojure.test/run-tests 'grant.test.parsing))
 
 (defn history
   ([]

@@ -12,12 +12,14 @@
 
      ; parsing
      [instaparse "1.4.10"]
+
+     [com.rpl/specter "1.1.2"]
   ]
 
   :profiles {
     :dev {
-      :dependencies [[org.clojure/tools.namespace "0.3.1"]]       
-    }            
+      :dependencies [[org.clojure/tools.namespace "0.3.1"]]
+    }
   }
 
   :plugins  [[lein-cljfmt "0.5.6"]
@@ -28,7 +30,7 @@
 
   :aliases {
       "travis" [
-        "with-profile" "test" "do" "unit," "integration," "cljfmt" "check"
+        "do" "test," "cljfmt" "check"
       ]
    }
 
