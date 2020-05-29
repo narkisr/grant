@@ -18,6 +18,7 @@
 
   :profiles {
     :dev {
+      :source-paths  ["src" "dev"]
       :dependencies [[org.clojure/tools.namespace "0.3.1"]]
     }
   }
@@ -41,11 +42,8 @@
 
   :resource-paths  ["src/main/resources/"]
 
-  :source-paths  ["src" "dev"]
 
   :target-path "target/"
-
-  :test-paths  []
 
   :repl-options {
     :init-ns user
