@@ -1,12 +1,12 @@
 (* User spec *)
-sudoers ::= ('Cmnd_Alias' cmnd-alias | user-spec )*
+sudoers ::= (<'Cmnd_Alias'> cmnd-alias | user-spec )*
 
-user-spec ::= user-list host-list '=' cmnd-spec-list (':' host-list '=' cmnd-spec-list)*
- 
+user-spec ::= user-list host-list <'='> cmnd-spec-list (':' host-list <'='> cmnd-spec-list)*
+
 (* Command aliases *)
 alias-name ::= #'[A-Z]([A-Z]|[0-9]|\_)*'
 
-cmnd-alias ::= alias-name '=' cmnd-list  |  alias-name '=' '\\' '\n' cmnd-list
+cmnd-alias ::= alias-name <'='> cmnd-list  |  alias-name <'='> <'\\'> <'\n'> cmnd-list
 
 file ::= #'(/[a-zA-Z0-9_-[.]]+)+'
 
@@ -22,18 +22,18 @@ directory ::= #'(/[a-zA-Z0-9_-]+)+/(\?|\*|\+)?'
 
 commandname ::= file+ (wildcard | flag | arg | file | '""'  | end-of-options)*
 
-cmnd-list ::= (cmnd {','} | cmnd {','} '\\' '\n' | cmnd '\n')+
+cmnd-list ::= (cmnd {<','>} | cmnd {<','>} <'\\'> <'\n'> | cmnd <'\n'>)+
 
-cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* alias-name)+ (#'\s*\n')*
+cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* alias-name)+ <(#'\s*\n')*>
 
 
 (* Runas *)
 
 name = #'([A-Z]|[a-z]|[0-9]|\_|\-)+'
 
-runas-alias ::= name '=' runas-list
+runas-alias ::= name <'='> runas-list
 
-runas-list ::= runas-member | runas-member ',' runas-list
+runas-list ::= runas-member | runas-member <','> runas-list
 
 uid = #'\d+'
 
@@ -60,7 +60,7 @@ runas-member ::= '!'* user |
 
 user ::= #'(\w|\d|\_|\-)+'
 
-user-list ::= user | user ',' user-list
+user-list ::= user | user <','> user-list
 
 (* host spec *)
 
@@ -74,9 +74,9 @@ host ::= '!'* hostname |
          '!'* +netgroup |
          '!'* Host_Alias *)
 
-host-list ::= host | host ',' host-list
+host-list ::= host | host <','> host-list
 
-cmnd-spec-list ::= (cmnd-spec | cmnd-spec ',')+ 
+cmnd-spec-list ::= (cmnd-spec | cmnd-spec <','>)+
 
 cmnd-spec ::= runas-spec? selinux-spec? tag-spec* cmnd
 
