@@ -2,7 +2,6 @@
   "Parsing sudoer files"
   (:require
    [clojure.walk :as w]
-   [com.rpl.specter :refer :all]
    [instaparse.core :as insta]))
 
 (def whitespace
