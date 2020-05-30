@@ -1,6 +1,7 @@
-(* User spec *)
+(* Entry point *)
 sudoers ::= (<'Cmnd_Alias'> cmnd-alias | user-spec )*
 
+(* User spec *)
 user-spec ::= user-list host-list <'='> cmnd-spec-list (':' host-list <'='> cmnd-spec-list)*
 
 (* Command aliases *)
@@ -80,7 +81,7 @@ cmnd-spec-list ::= (cmnd-spec | cmnd-spec <','>)+
 
 cmnd-spec ::= runas-spec? selinux-spec? tag-spec* cmnd
 
-runas-spec ::= '(' runas-list? (':' runas-list)? ')'
+runas-spec ::= <'('> runas-list? (<':'> runas-list)? <')'>
 
 selinux-spec ::= ('ROLE=role' | 'TYPE=type')
 
