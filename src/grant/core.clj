@@ -1,12 +1,11 @@
 (ns grant.core
   (:gen-class)
   (:require
-   [grant.rules :refer [add-facts initialize]]
+   [grant.rules :refer [add-facts]]
    [grant.parse :refer (sudoers process)]
    [cli-matic.core :refer (run-cmd)]))
 
 (defn validate [{:keys [f]}]
-  (initialize)
   (add-facts (process (sudoers f))))
 
 (defn parse [{:keys [f p]}]

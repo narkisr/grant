@@ -16,15 +16,11 @@
   =>
   (println ?e))
 
-(declare session)
-
-(defn initialize []
-  (def session
-    (atom (mk-session 'grant.rules :fact-type-fn fact-type :cache false))))
-
 (defn update- [facts]
-  (let [new-facts (reduce (fn [s fact] (insert s fact)) @session facts)]
-    (reset! session (fire-rules new-facts))))
+  (->
+   (mk-session 'grant.rules :fact-type-fn fact-type :cache true)
+   (insert facts)
+   (fire-rules)))
 
 (defn user-spec-wildcards [m]
   (m/search m
@@ -40,5 +36,5 @@
   (update- (user-spec-wildcards parse-data)))
 
 (comment
-  (def single (grant.parse/process (grant.parse/sudoers (slurp "test/resources/single-line-no-passwd"))))
+  (def single (grant.parse/process (grant.parse/sudoers (slurp "test/resources/aliases"))))
   (add-facts single))
