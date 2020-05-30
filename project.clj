@@ -1,4 +1,4 @@
-(defproject grant "0.0.1"
+(defproject grant "0.1.0"
   :description "Secure sudoers managment utility and library"
   :url "https://github.com/narkisr/grant"
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
@@ -12,8 +12,6 @@
 
      ; parsing
      [instaparse "1.4.10"]
-
-     [com.rpl/specter "1.1.2"]
   ]
 
   :profiles {
@@ -35,13 +33,14 @@
       ]
    }
 
+  ; supporting graalvm --no-fallback
+  :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
 
-  :repositories  {"bintray"  "https://dl.bintray.com/content/narkisr/narkisr-jars"
-                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"
-                  "libvirt-org" "https://libvirt.org/maven2"}
+  :main grant.core
+
+  :aot [grant.core]
 
   :resource-paths  ["src/main/resources/"]
-
 
   :target-path "target/"
 
