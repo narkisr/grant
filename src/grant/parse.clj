@@ -33,5 +33,5 @@
        :else v)) output))
 
 (comment
-  (sudoers (slurp "test/resources/re-ops")))
+  (sudoers (slurp "test/resources/aliases")))
 

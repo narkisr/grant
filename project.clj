@@ -14,7 +14,13 @@
      ; parsing
      [instaparse "1.4.10"]
 
+     ; CLI UI
      [cli-matic "0.3.11"]
+
+     ; rules
+     [meander/epsilon "0.0.421"]
+     [com.cerner/clara-rules "0.20.0"]
+     [prismatic/schema "1.1.6"]
   ]
 
   :profiles {
