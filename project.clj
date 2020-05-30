@@ -12,6 +12,8 @@
 
      ; parsing
      [instaparse "1.4.10"]
+
+     [cli-matic "0.3.11"]
   ]
 
   :profiles {
