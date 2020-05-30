@@ -4,7 +4,8 @@
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
 
   :dependencies [
-     [org.clojure/clojure "1.10.1"]
+     ; using alpha version due to https://clojure.atlassian.net/browse/CLJ-1472 in order to enable graalvm
+     [org.clojure/clojure "1.10.2-alpha1"]
 
      ; utils
      [me.raynes/fs "1.4.6"]
