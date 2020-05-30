@@ -1,4 +1,5 @@
 (ns grant.core
+  (:gen-class)
   (:require
    [grant.parse :refer (sudoers process)]
    [cli-matic.core :refer (run-cmd)]))
