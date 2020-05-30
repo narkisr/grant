@@ -16,8 +16,11 @@
   =>
   (println ?e))
 
-(def session
-  (atom (mk-session 'grant.rules :fact-type-fn fact-type :cache false)))
+(declare session)
+
+(defn initialize []
+  (def session
+    (atom (mk-session 'grant.rules :fact-type-fn fact-type :cache false))))
 
 (defn update- [facts]
   (let [new-facts (reduce (fn [s fact] (insert s fact)) @session facts)]
