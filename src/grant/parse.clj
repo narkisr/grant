@@ -7,8 +7,8 @@
 (def whitespace
   (insta/parser "whitespace ::= #'\\h+'"))
 
-(def sudoers
-  (insta/parser "resources/sudo.ebnf" :input-format :ebnf :auto-whitespace whitespace))
+(defn sudoers [f]
+  ((insta/parser "resources/sudo.ebnf" :input-format :ebnf :auto-whitespace whitespace) f))
 
 (defn key-pair? [v]
   (and (sequential? v) (= (count v) 2) (keyword? (first v)) (string? (second v))))
