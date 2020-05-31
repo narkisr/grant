@@ -11,7 +11,7 @@
 
 (defrule wildcards-violations
   "A rule that warns us about wildcards"
-  [?e <- ::user-spec [{:keys [?wildcard]}] (= ?wildcard true)]
+  [?e <- :user-spec [{:keys [wildcard?]}] (= wildcard? true)]
   =>
   (println ?e))
 
