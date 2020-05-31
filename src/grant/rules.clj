@@ -1,6 +1,5 @@
 (ns grant.rules
   (:require
-   [meander.epsilon :as m]
    [clara.rules :refer :all]))
 
 (defn fact-type [fact]
@@ -22,19 +21,4 @@
    (insert facts)
    (fire-rules)))
 
-(defn user-spec-wildcards [m]
-  (m/search m
-            {:sudoers
-             (m/scan
-              {:user-spec
-               {:user-list {:user ?user}
-                :cmnd-spec-list (m/scan {:cmnd-spec {:cmnd {:commandname (m/pred (partial some (fn [m] (contains? m :wildcard))) ?command)}}})}})}
 
-            {:type ::user-spec :user ?user :command ?command :wildcard? true}))
-
-(defn add-facts [parse-data]
-  (update- (user-spec-wildcards parse-data)))
-
-(comment
-  (def single (grant.parse/process (grant.parse/sudoers (slurp "test/resources/aliases"))))
-  (add-facts single))

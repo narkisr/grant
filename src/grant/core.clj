@@ -1,12 +1,15 @@
 (ns grant.core
   (:gen-class)
   (:require
-   [grant.rules :refer [add-facts]]
+   [grant.extract :refer [search]]
    [grant.parse :refer (sudoers process)]
    [cli-matic.core :refer (run-cmd)]))
 
-(defn validate [{:keys [f]}]
-  (add-facts (process (sudoers f))))
+(defn analyse [{:keys [f p]}]
+  (let [data (search (process (sudoers f)))]
+    (if p
+      (clojure.pprint/pprint data)
+      (println data))))
 
 (defn parse [{:keys [f p]}]
   (let [data (process (sudoers f))]
@@ -24,7 +27,7 @@
    :commands    [{:command     "analyse"
                   :description "Parse and analyse the provided sudoers file reporting possible security issues"
                   :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]
-                  :runs        validate}
+                  :runs        analyse}
                  {:command     "parse"
                   :description "Parse the provided file and print its output in an edn format"
                   :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]
