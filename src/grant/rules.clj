@@ -21,4 +21,3 @@
    (insert facts)
    (fire-rules)))
 
-
