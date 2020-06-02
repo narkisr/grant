@@ -10,7 +10,6 @@
 (defn sudoers [f]
   ((insta/parser "resources/sudo.ebnf" :input-format :ebnf :auto-whitespace whitespace) f))
 
-
 ; Converting parser result to nested maps and seqs
 
 
