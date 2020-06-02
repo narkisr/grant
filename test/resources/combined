@@ -1,0 +1,8 @@
+Defaults exempt_group = re-ops
+
+Defaults!PAGERS noexec
+
+Cmnd_Alias C_PIPES = \
+     /usr/bin/tee *, /usr/bin/tee -a *
+
+re-ops ALL=(ALL) NOPASSWD:/usr/bin/apt update, /usr/bin/apt upgrade -y, /usr/bin/purge-kernels, /usr/bin/apt-cleanup, /usr/bin/apt-get install * -y, /usr/sbin/ufw status,  /usr/bin/nmap *, /usr/bin/netstat -tnpa
