@@ -10,6 +10,10 @@
 (defn sudoers [f]
   ((insta/parser "resources/sudo.ebnf" :input-format :ebnf :auto-whitespace whitespace) f))
 
+
+; Converting parser result to nested maps and seqs
+
+
 (defn key-pair? [v]
   (and (sequential? v) (= (count v) 2) (keyword? (first v)) (string? (second v))))
 
@@ -47,8 +51,7 @@
        :else v)) output))
 
 (comment
-
   (apply disj #{1 2} #{2})
   (key-mergable-maps?)
+  (sudoers (slurp "test/resources/defaults"))
   (sudoers (slurp "test/resources/aliases")))
-

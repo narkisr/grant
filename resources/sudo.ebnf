@@ -1,5 +1,9 @@
 (* Entry point *)
-sudoers ::= (<'Cmnd_Alias'> cmnd-alias | user-spec )*
+sudoers ::= (<'Cmnd_Alias'> cmnd-alias | <'Defaults'> default-entry | user-spec)*
+
+(* User alias *)
+
+user-alias ::= name '=' user-list
 
 (* User spec *)
 user-spec ::= user-list host-list <'='> cmnd-spec-list (':' host-list <'='> cmnd-spec-list)*
@@ -59,9 +63,9 @@ runas-member ::= '!'* user |
 
 (* User Spec *)
 
-user ::= #'(\w|\d|\_|\-)+'
+user ::= #'([a-z]|\d|\_|\-)+'
 
-user-list ::= user | user <','> user-list
+user-list ::= (user | user <','> user-list)+
 
 (* host spec *)
 
@@ -73,7 +77,7 @@ host ::= '!'* hostname |
          '!'* ip_addr (*|
          '!'* network(/netmask)? |
          '!'* +netgroup |
-         '!'* Host_Alias *)
+         '!'* host-alias *)
 
 host-list ::= host | host <','> host-list
 
@@ -89,4 +93,26 @@ tag-spec ::= ('EXEC:' | 'NOEXEC:' | 'FOLLOW:' | 'NOFOLLOW' |
               'LOG_INPUT:' | 'NOLOG_INPUT:' | 'LOG_OUTPUT:' |
               'NOLOG_OUTPUT:' | 'MAIL:' | 'NOMAIL:' | 'PASSWD:' |
               'NOPASSWD:' | 'SETENV:' | 'NOSETENV:')
+
+
+(* Defaults *)
+default-type ::= '@' host-list |
+                 ':' (user | alias-name) |
+                 '!' cmnd-list |
+                 '>' runas-list
+
+default-entry ::= (default-type)? (parameter-list)+ <"\n">
+
+parameter-list ::= parameter | parameter <','>
+
+environment = #'[A-Z]([A-Z]|[0-9]|\_)*'
+
+value = (user | file | environment)
+
+identified = #'([a-z]|\_)+'
+
+parameter ::= identified <'='>  value |
+              identified <'+='> value  |
+		  identified <'-='> value |
+              '!'* identified
 
