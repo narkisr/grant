@@ -5,21 +5,20 @@
    [clojure.test :refer :all]))
 
 (deftest cmd-alias
-  (is (= (process (sudoers "Cmnd_Alias F = \\ \n /bin/foo , /foo/bar , /bla/bla -a * , /bin/* "))
-         '{:sudoers {:cmnd-alias {:alias-name "F"
+  (is (= (process (sudoers "Cmnd_Alias F = \\ \n /bin/foo , /foo/bar , /bla/bla -a * /tmp/bla, /bin/* 'one' "))
+         '{:sudoers {:cmnd-alias {:alias-name "F",
                                   :cmnd-list ({:cmnd {:commandname ({:file "/bin/foo"})}}
                                               {:cmnd {:commandname ({:file "/foo/bar"})}}
-                                              {:cmnd {:commandname ({:file "/bla/bla"} {:flag "-a"} {:wildcard "*"})}}
-                                              {:cmnd {:directory "/bin/*"}})}}})))
+                                              {:cmnd {:commandname ({:file "/bla/bla"} {:flag "-a"} {:wildcard "*"} {:file "/tmp/bla"})}}
+                                              {:cmnd {:commandname ({:directory "/bin/"} {:wildcard "*"})}})}}})))
 
 (deftest cmd-aliases
   (is (= (first (:sudoers (process (sudoers (slurp "test/resources/aliases")))))
-         '{:cmnd-alias {:alias-name "C_PIPES"
+         '{:cmnd-alias {:alias-name "C_PIPES",
                         :cmnd-list ({:cmnd {:commandname ({:file "/usr/bin/tee"} {:wildcard "*"})}}
                                     {:cmnd {:commandname ({:file "/usr/bin/tee"} {:flag "-a"} {:wildcard "*"})}}
                                     {:cmnd {:commandname ({:file "/usr/bin/sed"} {:flag "-i"} {:wildcard "*"})}}
-                                    {:cmnd {:commandname ({:file "/usr/bin/tail"} {:flag "-f"})}}
-                                    {:cmnd {:directory "/var/log/*"}})}})))
+                                    {:cmnd {:commandname ({:file "/usr/bin/tail"} {:flag "-f"}), :directory {:path "/var/log/", :wildcard "*"}}})}})))
 
 (deftest single-line-no-passwd
   (is (= (:sudoers (process (sudoers (slurp "test/resources/single-line-no-passwd"))))
@@ -48,3 +47,5 @@
                             {:parameter-list {:parameter {:identified "log_year"}}}
                             {:parameter-list {:parameter {:value {:file "/var/log/sudo.log"}, :identified "logfile"}}})}
            {:default-entry {:default-type {:cmnd-list {:cmnd {:alias-name "PAGERS"}}}, :parameter-list {:parameter {:identified "noexec"}}}}))))
+
+(sudoers (slurp "test/resources/combined"))

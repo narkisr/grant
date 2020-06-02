@@ -1,5 +1,7 @@
 (* Entry point *)
-sudoers ::= (<'Cmnd_Alias'> cmnd-alias | <'Defaults'> default-entry | user-spec)*
+sudoers ::= (<'Cmnd_Alias'> cmnd-alias | <'Defaults'> default-entry | user-spec | <empty-line>)*
+
+empty-line = #'^\s*\n' |  #'^\n'
 
 (* User alias *)
 
@@ -19,17 +21,18 @@ wildcard ::= #'\?|\*|\+'
 
 flag = (#'\-\w+' | #'\--\w+')
 
-arg = #'(\w|\d|\_|\=)+'
+arg =  #'([a-zA-Z]|\d|\_|\=|\')+'
 
 end-of-options = '--'
 
-directory ::= #'(/[a-zA-Z0-9_-]+)+/(\?|\*|\+)?'
+directory ::= #'(/[a-zA-Z0-9_-]+)+/' 
 
-commandname ::= file+ (wildcard | flag | arg | file | '""'  | end-of-options)*
+commandname ::= file (wildcard | flag | arg | file  | directory | '""'  | end-of-options)* |
+                directory wildcard (arg | flag | file  | '""'  | end-of-options)*
 
 cmnd-list ::= (cmnd {<','>} | cmnd {<','>} <'\\'> <'\n'> | cmnd <'\n'>)+
 
-cmnd ::= ('!'* commandname | '!'* directory | '!'* "sudoedit" | '!'* alias-name)+ <(#'\s*\n')*>
+cmnd ::= ('!'* commandname | '!'* "sudoedit" | '!'* alias-name)+ <(#'\s*\n')?>
 
 
 (* Runas *)
