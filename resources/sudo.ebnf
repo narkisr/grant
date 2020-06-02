@@ -96,10 +96,10 @@ tag-spec ::= ('EXEC:' | 'NOEXEC:' | 'FOLLOW:' | 'NOFOLLOW' |
 
 
 (* Defaults *)
-default-type ::= '@' host-list |
-                 ':' (user | alias-name) |
-                 '!' cmnd-list |
-                 '>' runas-list
+default-type ::= <'@'> host-list |
+                 <':'> (user | alias-name) |
+                 <'!'> cmnd-list |
+                 <'>'> runas-list
 
 default-entry ::= (default-type)? (parameter-list)+ <"\n">
 

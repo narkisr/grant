@@ -41,10 +41,10 @@
          '({:default-entry {:parameter-list {:parameter {:value {:user "re-ops"}, :identified "exempt_group"}}}}
            {:default-entry ({:parameter-list ([:parameter "!" {:identified "env_reset"}])} {:parameter-list {:parameter {:value {:environment "PATH"}, :identified "env_delete"}}})}
            {:default-entry {:parameter-list {:parameter {:value {:user "auth"}, :identified "syslog"}}}}
-           {:default-entry ([:default-type ">" {:runas-list {:runas-member {:user "root"}}}] {:parameter-list ([:parameter "!" {:identified "set_logname"}])})}
-           {:default-entry ([:default-type ":" {:alias-name "FULLTIMERS"}] {:parameter-list ([:parameter "!" {:identified "lecture"}])})}
-           {:default-entry ([:default-type ":" {:user "millert"}] {:parameter-list ([:parameter "!" {:identified "authenticate"}])})}
-           {:default-entry ([:default-type "@" {:host-list {:host {:hostname "SERVERS"}}}]
+           {:default-entry {:default-type {:runas-list {:runas-member {:user "root"}}}, :parameter-list ([:parameter "!" {:identified "set_logname"}])}}
+           {:default-entry {:default-type {:alias-name "FULLTIMERS"}, :parameter-list ([:parameter "!" {:identified "lecture"}])}}
+           {:default-entry {:default-type {:user "millert"}, :parameter-list ([:parameter "!" {:identified "authenticate"}])}}
+           {:default-entry ({:default-type {:host-list {:host {:hostname "SERVERS"}}}}
                             {:parameter-list {:parameter {:identified "log_year"}}}
                             {:parameter-list {:parameter {:value {:file "/var/log/sudo.log"}, :identified "logfile"}}})}
-           {:default-entry ([:default-type "!" {:cmnd-list {:cmnd {:alias-name "PAGERS"}}}] {:parameter-list {:parameter {:identified "noexec"}}})}))))
+           {:default-entry {:default-type {:cmnd-list {:cmnd {:alias-name "PAGERS"}}}, :parameter-list {:parameter {:identified "noexec"}}}}))))
