@@ -32,7 +32,7 @@ commandname ::= file (wildcard | flag | arg | file  | directory | '""'  | end-of
 
 cmnd-list ::= (cmnd {<','>} | cmnd {<','>} <'\\'> <'\n'> | cmnd <'\n'>)+
 
-cmnd ::= ('!'* commandname | '!'* "sudoedit" | '!'* alias-name)+ <(#'\s*\n')?>
+cmnd ::= '!'* commandname | '!'* "sudoedit" | '!'* alias-name <(#'\s*\n')?>
 
 
 (* Runas *)
