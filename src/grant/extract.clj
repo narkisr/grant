@@ -22,6 +22,19 @@
 
             {:type :user-spec :user ?user :command ?command :wildcard? true}))
 
+(defn cmd-alias-wildcards
+  "Get wildcards in cmd aliases"
+  [m]
+  (m/search m
+            {:sudoers
+             (m/scan
+              {:cmnd-alias
+               {:alias-name ?alias-name
+                :cmnd-list
+                (m/scan {:cmnd {:commandname (m/pred (partial some (fn [m] (contains? m :wildcard))) ?command)}})}})}
+
+            {:type :cmnd-alias :alias-name ?alias-name :command ?command :wildcard? true}))
+
 (defn search [m]
   (user-spec-wildcards m))
 
