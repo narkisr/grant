@@ -2,6 +2,7 @@
   "Testing parser"
   (:require
    [grant.parse :refer [sudoers process]]
+   [grant.extract :refer [cmd-alias-wildcards]]
    [clojure.test :refer :all]))
 
 (deftest cmd-alias
@@ -13,12 +14,12 @@
                                               {:cmnd {:commandname ({:directory "/bin/"} {:wildcard "*"})}})}}})))
 
 (deftest cmd-aliases
-  (is (= (first (:sudoers (process (sudoers (slurp "test/resources/aliases")))))
-         '{:cmnd-alias {:alias-name "C_PIPES",
-                        :cmnd-list ({:cmnd {:commandname ({:file "/usr/bin/tee"} {:wildcard "*"})}}
-                                    {:cmnd {:commandname ({:file "/usr/bin/tee"} {:flag "-a"} {:wildcard "*"})}}
-                                    {:cmnd {:commandname ({:file "/usr/bin/sed"} {:flag "-i"} {:wildcard "*"})}}
-                                    {:cmnd {:commandname ({:file "/usr/bin/tail"} {:flag "-f"}), :directory {:path "/var/log/", :wildcard "*"}}})}})))
+  (let [{:keys [sudoers] :as data} (process (sudoers (slurp "test/resources/aliases")))
+        names #{"C_PIPES" "C_PKG" "C_KERNEL" "C_SERVICE" "C_SYSTEMCTL" "C_USER" "C_SECURITY" "C_DISK" "C_VIRTUAL"}
+        aliases (filter #(contains? % :cmnd-alias) sudoers)]
+    (is (= (count aliases) 9))
+    (is (= (into #{} (map (comp :alias-name :cmnd-alias) aliases)) names))
+    (is (= (count (cmd-alias-wildcards data)) 25))))
 
 (deftest single-line-no-passwd
   (is (= (:sudoers (process (sudoers (slurp "test/resources/single-line-no-passwd"))))
