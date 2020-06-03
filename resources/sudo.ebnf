@@ -25,7 +25,7 @@ arg =  #'([a-zA-Z]|\d|\_|\=|\')+'
 
 end-of-options = '--'
 
-directory ::= #'(/[a-zA-Z0-9_-]+)+/' 
+directory ::= #'(/[a-zA-Z0-9_-]+)+/'
 
 commandname ::= file (wildcard | flag | arg | file  | directory | '""'  | end-of-options)* |
                 directory wildcard (arg | flag | file  | '""'  | end-of-options)*
@@ -106,7 +106,7 @@ default-type ::= <'@'> host-list |
 
 default-entry ::= (default-type)? (parameter-list)+ <"\n">
 
-parameter-list ::= parameter | parameter <','>
+parameter-list ::= parameter (<','> parameter)*
 
 environment = #'[A-Z]([A-Z]|[0-9]|\_)*'
 
