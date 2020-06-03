@@ -6,12 +6,12 @@
    [clojure.test :refer :all]))
 
 (deftest cmd-alias
-  (is (= (process (sudoers "Cmnd_Alias F = \\ \n /bin/foo , /foo/bar , /bla/bla -a * /tmp/bla, /bin/* 'one' "))
-         '{:sudoers {:cmnd-alias {:alias-name "F",
-                                  :cmnd-list ({:cmnd {:commandname ({:file "/bin/foo"})}}
-                                              {:cmnd {:commandname ({:file "/foo/bar"})}}
-                                              {:cmnd {:commandname ({:file "/bla/bla"} {:flag "-a"} {:wildcard "*"} {:file "/tmp/bla"})}}
-                                              {:cmnd {:commandname ({:directory "/bin/"} {:wildcard "*"})}})}}})))
+  (is (= (:sudoers (process (sudoers "Cmnd_Alias F = \\ \n /bin/foo , /foo/bar , /bla/bla -a * /tmp/bla/ yeap, /bin/* 'one' ")))
+         '{:cmnd-alias {:alias-name "F",
+                        :cmnd-list ({:cmnd {:commandname ({:file "/bin/foo"})}}
+                                    {:cmnd {:commandname ({:file "/foo/bar"})}}
+                                    {:cmnd {:commandname ({:file "/bla/bla"} {:flag "-a"} {:wildcard "*"} {:directory "/tmp/bla/"} {:arg "yeap"})}}
+                                    {:cmnd {:commandname ({:directory "/bin/"} {:wildcard "*"} {:arg "'one'"})}})}})))
 
 (deftest cmd-aliases
   (let [{:keys [sudoers] :as data} (process (sudoers (slurp "test/resources/aliases")))
@@ -49,4 +49,21 @@
                             {:parameter-list {:parameter {:value {:file "/var/log/sudo.log"}, :identified "logfile"}}})}
            {:default-entry {:default-type {:cmnd-list {:cmnd {:alias-name "PAGERS"}}}, :parameter-list {:parameter {:identified "noexec"}}}}))))
 
-(sudoers (slurp "test/resources/combined"))
+(deftest combined
+  (is (= (:sudoers (process (sudoers (slurp "test/resources/combined"))))
+         '({:default-entry {:parameter-list {:parameter {:value {:user "re-ops"}, :identified "exempt_group"}}}}
+           {:default-entry {:default-type {:cmnd-list {:cmnd {:alias-name "PAGERS"}}}, :parameter-list {:parameter {:identified "noexec"}}}}
+           {:cmnd-alias {:alias-name "C_PIPES",
+                         :cmnd-list ({:cmnd {:commandname ({:file "/usr/bin/tee"} {:wildcard "*"})}} {:cmnd {:commandname ({:file "/usr/bin/tee"} {:flag "-a"} {:wildcard "*"})}})}}
+           {:user-spec {:user-list {:user "re-ops"},
+                        :host-list {:host {:hostname "ALL"}},
+                        :cmnd-spec-list ({:cmnd-spec {:runas-spec {:runas-list {:runas-member {:alias-name "ALL"}}},
+                                                      :tag-spec "NOPASSWD:",
+                                                      :cmnd {:commandname ({:file "/usr/bin/apt"} {:arg "update"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/bin/apt"} {:arg "upgrade"} {:flag "-y"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/bin/purge-kernels"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/bin/apt-cleanup"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/bin/apt-get"} {:arg "install"} {:wildcard "*"} {:flag "-y"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/sbin/ufw"} {:arg "status"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/bin/nmap"} {:wildcard "*"})}}}
+                                         {:cmnd-spec {:cmnd {:commandname ({:file "/usr/bin/netstat"} {:flag "-tnpa"})}}})}}))))
