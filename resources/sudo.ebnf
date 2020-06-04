@@ -112,10 +112,10 @@ environment = #'[A-Z]([A-Z]|[0-9]|\_)*'
 
 value = (user | file | environment)
 
-identified = #'([a-z]|\_)+'
+identifier = #'([a-z]|\_)+'
 
-parameter ::= identified <'='>  value |
-              identified <'+='> value  |
-		  identified <'-='> value |
-              '!'* identified
+parameter ::= identifier <'='>  value |
+              identifier <'+='> value  |
+		  identifier <'-='> value |
+              '!'* identifier
 
