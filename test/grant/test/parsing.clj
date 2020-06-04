@@ -14,12 +14,12 @@
             [[:directory "/bin/"] [:wildcard "*"] [:arg "'one'"]]]]])))
 
 (deftest cmd-aliases
-  (let [sudoers (rest (process (sudoers (slurp "test/resources/aliases"))))
+  (let [data (process (sudoers (slurp "test/resources/aliases")))
         names #{"C_PIPES" "C_PKG" "C_KERNEL" "C_SERVICE" "C_SYSTEMCTL" "C_USER" "C_SECURITY" "C_DISK" "C_VIRTUAL"}
-        aliases (filter #(= (first %) :cmnd-alias) sudoers)]
+        aliases (filter #(= (first %) :cmnd-alias) (rest data))]
     (is (= (count aliases) 9))
     (is (= (into #{} (map second aliases)) names))
-    #_(is (= (count (cmd-alias-wildcards data)) 25))))
+    (is (= (count (cmd-alias-wildcards data)) 25))))
 
 (deftest single-line-no-passwd
   (is (= (process (sudoers (slurp "test/resources/single-line-no-passwd")))
