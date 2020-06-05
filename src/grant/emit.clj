@@ -9,14 +9,18 @@
   (w/postwalk
    (fn [v]
      (match [v]
-       [[:default/runas r vs]]  [(str "Defaults>" r) (clojure.string/join "," (flatten vs))]
+       [[:default/runas user parameters]]  [(str "Defaults>" user) (clojure.string/join "," (flatten parameters))]
+       [[:default/servers server parameters]]  [(str "Defaults@" server) (clojure.string/join "," (flatten parameters))]
+       [[:default/cmnd-alias alias-name parameters]]  [(str "Defaults!" alias-name) (clojure.string/join "," (flatten parameters))]
        [[:default & vs]]  ["Defaults" (clojure.string/join "," (flatten vs))]
        [[:not i]]  (str "!" i)
        [[:identifier i]]  i
        [[:value [_ i]]] i
-       [[:subtract [i ve]]]  (str i "-=" ve)
-       [[:equals f s]]  [f "=" s ","]
+       [[:subtract f s]]  (str f "-=" s)
+       [[:equals f s]]  (str f "=" s)
        :else  v)) ast))
+
+(defn emit-user-spec [ast])
 
 (defn emit
   "Processing sudoers file ast form and generating a string output"
@@ -25,7 +29,10 @@
    (fn [v]
      (match [v]
        [[:default/runas _ _]] (emit-defaults v)
+       [[:default/servers _ _]] (emit-defaults v)
+       [[:default/cmnd-alias _ _]] (emit-defaults v)
        [[:default & _]] (emit-defaults v)
+       [[:user-spec _ _ _]] (emit-user-spec v)
        :else v)) ast))
 
 (comment
@@ -42,7 +49,7 @@
 
   (def subtract-default)
 
-  (def run-as-default [:default/runas "root" [[:not [:identifier "set_logname"]]]])
+  (def run-as-default [:default/runas "root" [[[:equals [:identifier "set_logname"] [:value [:user "foo"]]]]]])
 
   (emit subtract-default)
   (emit run-as-default))
