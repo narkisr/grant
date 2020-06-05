@@ -48,6 +48,30 @@
        [[:cmnd [:commandname & commands]]] commands
        :else v)) u))
 
+(defn user-alias [u]
+  (w/postwalk
+   (fn [v]
+     (match [v]
+       [[:user-alias [:name alias-name] [:user-list & users]]] [:user-alias alias-name users]
+       [[:user user]] user
+       :else v)) u))
+
+(defn runas-alias [u]
+  (w/postwalk
+   (fn [v]
+     (match [v]
+       [[:runas-alias [:name alias-name] [:runas-list & users]]] [:runas-alias alias-name users]
+       [[:runas-member [:user user]]] user
+       :else v)) u))
+
+(defn host-alias [u]
+  (w/postwalk
+   (fn [v]
+     (match [v]
+       [[:host-alias [:name alias-name] [:host-list & hosts]]] [:host-alias alias-name hosts]
+       [[:host host]] host
+       :else v)) u))
+
 (defn process
   "Converting parser result to grant simplified form "
   [output]
@@ -57,14 +81,11 @@
        [[:default-entry _]] (defaults v)
        [[:default-entry & _]] (defaults v)
        [[:cmnd-alias & _]] (cmnd-alias v)
+       [[:user-alias & _]] (user-alias v)
+       [[:runas-alias & _]] (runas-alias v)
+       [[:host-alias & _]] (host-alias v)
        [[:user-spec & _]] (user-spec v)
        :else v)) output))
 
 (comment
-  (process (sudoers (slurp "test/resources/defaults")))
-  (process (sudoers (slurp "test/resources/aliases")))
-  (process (sudoers (slurp "test/resources/single-line-no-passwd")))
-  (process (sudoers (slurp "test/resources/combined")))
-  (sudoers (slurp "test/resources/defaults"))
-  (sudoers (slurp "test/resources/aliases"))
   (sudoers (slurp "test/resources/single-line-no-passwd")))

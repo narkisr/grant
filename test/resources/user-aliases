@@ -1,0 +1,3 @@
+User_Alias ADMINS= john, joe, bart
+User_Alias DEVELOPERS = lisa, homer
+User_Alias SUPPORT = marge, moe

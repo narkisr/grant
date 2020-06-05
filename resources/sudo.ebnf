@@ -1,11 +1,11 @@
 (* Entry point *)
-sudoers ::= (<'Cmnd_Alias'> cmnd-alias | <'Defaults'> default-entry | user-spec | <empty-line>)*
+sudoers ::= (<'Cmnd_Alias'> cmnd-alias | <'User_Alias'> user-alias | <'Runas_Alias'> runas-alias | <'Host_Alias'> host-alias | <'Defaults'> default-entry | user-spec | <empty-line>)*
 
 empty-line = #'^\s*\n' |  #'^\n'
 
 (* User alias *)
 
-user-alias ::= name '=' user-list
+user-alias ::= name <'='> user-list
 
 (* User spec *)
 user-spec ::= user-list host-list <'='> cmnd-spec-list (':' host-list <'='> cmnd-spec-list)*
@@ -41,7 +41,7 @@ name = #'([A-Z]|[a-z]|[0-9]|\_|\-)+'
 
 runas-alias ::= name <'='> runas-list
 
-runas-list ::= runas-member | runas-member <','> runas-list
+runas-list ::= (runas-member | runas-member <','>)+
 
 uid = #'\d+'
 
@@ -68,21 +68,21 @@ runas-member ::= '!'* user |
 
 user ::= #'([a-z]|\d|\_|\-)+'
 
-user-list ::= (user | user <','> user-list)+
+user-list ::= (user | user <','>)+
 
-(* host spec *)
+(* Host spec *)
 
-ip_addr = #'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+host-alias ::= name <'='> host-list
+
+ip-addr = #'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+
+network = #'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/\d\d?'
 
 hostname ::= #'([A-Z]|[a-z]|[0-9]|\_|\-)+'
 
-host ::= '!'* hostname |
-         '!'* ip_addr (*|
-         '!'* network(/netmask)? |
-         '!'* +netgroup |
-         '!'* host-alias *)
+host ::= '!'* hostname | '!'* ip-addr | '!'* host-alias | '!'* network
 
-host-list ::= host | host <','> host-list
+host-list ::= (host | host <','>)+
 
 cmnd-spec-list ::= (cmnd-spec | cmnd-spec <','>)+
 

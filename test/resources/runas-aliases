@@ -1,0 +1,3 @@
+Runas_Alias	ADMINS = root
+Runas_Alias	DB = mysql, psql, redis
+Runas_Alias	WEB = apache, nginx

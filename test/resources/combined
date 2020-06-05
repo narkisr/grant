@@ -5,4 +5,10 @@ Defaults!PAGERS noexec
 Cmnd_Alias C_PIPES = \
      /usr/bin/tee *, /usr/bin/tee -a *
 
+Host_Alias PROD = server-1, server-2, server-3
+
+User_Alias SUPPORT = marge, moe
+
+Runas_Alias	WEB = apache, nginx
+
 re-ops ALL=(ALL) NOPASSWD:/usr/bin/apt update, /usr/bin/apt upgrade -y, /usr/bin/purge-kernels, /usr/bin/apt-cleanup, /usr/bin/apt-get install * -y, /usr/sbin/ufw status,  /usr/bin/nmap *, /usr/bin/netstat -tnpa
