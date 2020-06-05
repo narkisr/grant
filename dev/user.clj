@@ -25,7 +25,9 @@
   (require 'grant.test.parsing))
 
 (defn run-tests []
-  (clojure.test/run-tests 'grant.test.parsing))
+  (clojure.test/run-tests 
+    'grant.test.emit
+    'grant.test.parsing))
 
 (defn history
   ([]

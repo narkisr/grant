@@ -5,9 +5,7 @@
    [clojure.walk :as w]
    [clojure.core.strint :refer (<<)]))
 
-(defn emit
-  "Processing sudoers file ast form and generating a string output"
-  [ast]
+(defn emit-defaults [ast]
   (w/postwalk
    (fn [v]
      (match [v]
@@ -19,6 +17,16 @@
        [[:subtract [i ve]]]  (str i "-=" ve)
        [[:equals f s]]  [f "=" s ","]
        :else  v)) ast))
+
+(defn emit
+  "Processing sudoers file ast form and generating a string output"
+  [ast]
+  (w/postwalk
+   (fn [v]
+     (match [v]
+       [[:default/runas _ _]] (emit-defaults v)
+       [[:default & _]] (emit-defaults v)
+       :else v)) ast))
 
 (comment
   (def cmnd-alias [:cmnd-alias "C_PIPES"
@@ -32,12 +40,9 @@
 
   (def default-simple [:default [[[:identifier "exempt_group"] [:value [:user "re-ops"]]]]])
 
-  (def subtract-default [:default [[:not [:identifier "env_reset"]] [:subtract [[:identifier "env_delete"] [:value [:environment "PATH"]]]]]])
+  (def subtract-default)
 
   (def run-as-default [:default/runas "root" [[:not [:identifier "set_logname"]]]])
 
   (emit subtract-default)
-  (emit run-as-default)
-
-  (emit [:default [:equals [:identifier "foo"] [:value "PATH"]] [:not [:identifier "env_reset"]]])
-  (emit [:default/run-as "root" [:equals [:identifier "foo"] [:value "PATH"]] [:not [:identifier "env_reset"]]]))
+  (emit run-as-default))

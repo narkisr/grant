@@ -73,7 +73,7 @@
        :else v)) u))
 
 (defn process
-  "Converting parser result to grant simplified form "
+  "Converting parser result to AST"
   [output]
   (w/postwalk
    (fn [v]

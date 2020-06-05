@@ -1,5 +1,5 @@
 (ns grant.test.parsing
-  "Testing parser"
+  "Testing parsing and AST extraction"
   (:require
    [grant.parse :refer [sudoers process]]
    [grant.extract :refer [cmd-alias-wildcards]]
