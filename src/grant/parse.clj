@@ -23,7 +23,9 @@
        [[:default-entry [:default-type [:cmnd-list [:cmnd [:alias-name alias-name]]]] parameters]]  [:default/cmnd-alias alias-name parameters]
        [[:parameter-list & parameters]]  parameters
        [[:parameter "!" identifier]]  [:not identifier]
-       [[:parameter identifier value]]  [identifier value]
+       [[:parameter identifier "=" value]]  [:equals identifier value]
+       [[:parameter identifier "-=" value]]  [:subtract identifier value]
+       [[:parameter identifier "+=" value]]  [:add identifier value]
        [[:parameter identifier]]  [identifier]
        :else v)) d))
 
@@ -88,4 +90,4 @@
        :else v)) output))
 
 (comment
-  (sudoers (slurp "test/resources/single-line-no-passwd")))
+  (process (sudoers (slurp "test/resources/defaults"))))

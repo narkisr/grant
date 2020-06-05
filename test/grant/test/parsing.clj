@@ -59,19 +59,19 @@
 (deftest defaults
   (is (= (process (sudoers (slurp "test/resources/defaults")))
          [:sudoers
-          [:default [[[:identifier "exempt_group"] [:value [:user "re-ops"]]]]]
-          [:default [[:not [:identifier "env_reset"]] [[:identifier "env_delete"] [:value [:environment "PATH"]]]]]
-          [:default [[[:identifier "syslog"] [:value [:user "auth"]]]]]
+          [:default [[:equals [:identifier "exempt_group"] [:value [:user "re-ops"]]]]]
+          [:default [[:not [:identifier "env_reset"]] [:subtract [:identifier "env_delete"] [:value [:environment "PATH"]]]]]
+          [:default [[:add [:identifier "syslog"] [:value [:user "auth"]]]]]
           [:default/runas "root" [[:not [:identifier "set_logname"]]]]
           [:default/user-alias "FULLTIMERS" [[:not [:identifier "lecture"]]]]
           [:default/user "millert" [[:not [:identifier "authenticate"]]]]
-          [:default/servers "SERVERS" [[[:identifier "log_year"]] [[:identifier "logfile"] [:value [:file "/var/log/sudo.log"]]]]]
+          [:default/servers "SERVERS" [[[:identifier "log_year"]] [:equals [:identifier "logfile"] [:value [:file "/var/log/sudo.log"]]]]]
           [:default/cmnd-alias "PAGERS" [[[:identifier "noexec"]]]]])))
 
 (deftest combined
   (is (= (process (sudoers (slurp "test/resources/combined")))
          [:sudoers
-          [:default [[[:identifier "exempt_group"] [:value [:user "re-ops"]]]]]
+          [:default [[:equals [:identifier "exempt_group"] [:value [:user "re-ops"]]]]]
           [:default/cmnd-alias "PAGERS" [[[:identifier "noexec"]]]]
           [:cmnd-alias "C_PIPES" [[[:file "/usr/bin/tee"] [:wildcard "*"]] [[:file "/usr/bin/tee"] [:flag "-a"] [:wildcard "*"]]]]
           [:host-alias "PROD" [[:hostname "server-1"] [:hostname "server-2"] [:hostname "server-3"]]]

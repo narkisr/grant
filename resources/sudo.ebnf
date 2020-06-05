@@ -114,8 +114,8 @@ value = (user | file | environment)
 
 identifier = #'([a-z]|\_)+'
 
-parameter ::= identifier <'='>  value |
-              identifier <'+='> value  |
-		  identifier <'-='> value |
+parameter ::= identifier '='  value |
+              identifier '+=' value  |
+		  identifier '-=' value |
               '!'* identifier
 
