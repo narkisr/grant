@@ -23,9 +23,9 @@
 
 (defn require-tests []
   (require
-    'grant.test.emit
-    'grant.test.extract
-    'grant.test.parsing))
+   'grant.test.emit
+   'grant.test.extract
+   'grant.test.parsing))
 
 (defn run-tests []
   (clojure.test/run-tests
