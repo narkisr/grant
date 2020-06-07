@@ -46,7 +46,7 @@
        [[:cmnd-spec & spec]] spec
        [[:runas-spec [:runas-list [:runas-member [:alias-name alias-name]]]]] [:runas [:alias alias-name]]
        [[:tag-spec tag]] [:tag tag]
-       [[:cmnd [:alias-name alias-name]]] [:alias-name alias-name]
+       [[:cmnd [:alias-name alias-name]]] [[:alias-name alias-name]]
        [[:cmnd [:commandname & commands]]] commands
        :else v)) u))
 

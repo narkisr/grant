@@ -1,24 +1,20 @@
 (ns grant.core
   (:gen-class)
   (:require
-   [grant.extract :refer [search]]
+   [grant.extract]
    [grant.parse :refer (sudoers process)]
    [grant.rules :refer (update-)]
    [cli-matic.core :refer (run-cmd)]))
 
 (defn analyse [{:keys [f]}]
   (if (.contains (System/getProperty "java.vm.name") "OpenJDK")
-    (let [facts (search (process (sudoers f)))]
-      (update- facts))
+    #_(let [facts (search (process (sudoers f)))]
+        (update- facts))
     (do
       (println "this command is only available on the OpenJDK binary, native binary doesn't support it at the moment")
       (System/exit 1))))
 
-(defn extract [{:keys [f p]}]
-  (let [facts (search (process (sudoers f)))]
-    (if p
-      (clojure.pprint/pprint facts)
-      (println facts))))
+(defn extract [{:keys [f p]}])
 
 (defn parse [{:keys [f p]}]
   (let [data (process (sudoers f))]

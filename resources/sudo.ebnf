@@ -27,8 +27,9 @@ end-of-options = '--'
 
 directory ::= #'(/[a-zA-Z0-9_-]+)+/'
 
-commandname ::= file (wildcard | flag | arg | file  | directory | '""'  | end-of-options)* |
-                directory wildcard (arg | flag | file  | '""'  | end-of-options)*
+commandname ::= file (wildcard | flag | arg | file  | directory | '""'  | end-of-options)* /
+                directory wildcard (arg | flag | file  | '""'  | end-of-options)* / 
+                directory
 
 cmnd-list ::= (cmnd {<','>} | cmnd {<','>} <'\\'> <'\n'> | cmnd <'\n'>)+
 

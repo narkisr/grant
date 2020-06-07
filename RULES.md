@@ -10,7 +10,6 @@ This allows the user to /bin/cp which means he can replace any file under /bin/
 
 Enumerate allowed commands lists with full paths (and hashes)
 
-
 # Rule 2
 
 Dont use wildcards, its hard to predict the effect of using them:

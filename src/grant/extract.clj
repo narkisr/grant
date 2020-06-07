@@ -3,36 +3,26 @@
   (:require
    [meander.epsilon :as m]))
 
-(defn user-spec-wildcards
-  "Get wildcards in user specs"
-  [m]
-  (m/search m
-            {:sudoers
-             {:user-spec
-              {:user-list {:user ?user}
-               :cmnd-spec-list (m/scan {:cmnd-spec {:cmnd {:commandname (m/pred (partial some (fn [m] (contains? m :wildcard))) ?command)}}})}}}
-
-            {:type :user-spec :user ?user :command ?command :wildcard? true}
-
-            {:sudoers
-             (m/scan
-              {:user-spec
-               {:user-list {:user ?user}
-                :cmnd-spec-list (m/scan {:cmnd-spec {:cmnd {:commandname (m/pred (partial some (fn [m] (contains? m :wildcard))) ?command)}}})}})}
-
-            {:type :user-spec :user ?user :command ?command :wildcard? true}))
-
-(defn cmd-alias-wildcards
-  "Get wildcards in cmd aliases"
+(defn folder-usage
+  "Full folder access enabled in user spec or command alias, this is a violation of Rule 1"
   [m]
   (into #{}
         (m/search m
-                  (m/$ [:cmnd-alias ?alias-name (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
-                  {:type :cmnd-alias :alias-name ?alias-name :command ?command})))
+                  (m/$ [:cmnd-alias ?alias-name (m/scan (m/pred (fn [[[k _] & rs]] (and (empty? rs) (= k :directory))) ?command))])
+                  {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-1}
+                  (m/$ [:user-spec [[:user ?user]] ?host  (m/scan (m/pred (fn [[[k _] & rs]] (and (empty? rs) (= k :directory))) ?command))])
+                  {:type :cmnd-alias :user ?user :command ?command :violation :rule-1})))
 
-(defn search [m]
-  (user-spec-wildcards m))
+(defn wildcards-usage
+  "Wildcards used in user spec or cmnd alias, this is a violation of Rule 2"
+  [m]
+  (into #{} (m/search m
+                      (m/$ [:cmnd-alias ?alias-name (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
+                      {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-2}
+                      (m/$ [:user-spec [[:user ?user]] ?host (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
+                      {:type :user-spec :user ?user :host ?host :command ?command :violation :rule-2})))
 
 (comment
-  (cmd-alias-wildcards (grant.parse/process (grant.parse/sudoers (slurp "test/resources/aliases"))))
-  (user-spec-wildcards (grant.parse/process (grant.parse/sudoers (slurp "test/resources/single-line-no-passwd")))))
+  (wildcards-usage (grant.parse/process (grant.parse/sudoers (slurp "test/resources/cmnd-aliases"))))
+  (folder-usage (grant.parse/process (grant.parse/sudoers (slurp "test/resources/cmnd-aliases"))))
+  (folder-usage (grant.parse/process (grant.parse/sudoers (slurp "test/resources/single-line-no-passwd")))))

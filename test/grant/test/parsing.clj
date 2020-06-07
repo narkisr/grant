@@ -2,7 +2,6 @@
   "Testing parsing and AST extraction"
   (:require
    [grant.parse :refer [sudoers process]]
-   [grant.extract :refer [cmd-alias-wildcards]]
    [clojure.test :refer :all]))
 
 (deftest cmd-alias
@@ -18,8 +17,7 @@
         names #{"C_PIPES" "C_PKG" "C_KERNEL" "C_SERVICE" "C_SYSTEMCTL" "C_USER" "C_SECURITY" "C_DISK" "C_VIRTUAL"}
         aliases (filter #(= (first %) :cmnd-alias) (rest data))]
     (is (= (count aliases) 9))
-    (is (= (into #{} (map second aliases)) names))
-    (is (= (count (cmd-alias-wildcards data)) 25))))
+    (is (= (into #{} (map second aliases)) names))))
 
 (deftest runas-aliases
   (is (= (process (sudoers (slurp "test/resources/runas-aliases")))
@@ -54,7 +52,8 @@
             [[:file "/usr/bin/apt-get"] [:arg "install"] [:wildcard "*"] [:flag "-y"]]
             [[:file "/usr/sbin/ufw"] [:arg "status"]]
             [[:file "/usr/bin/nmap"] [:wildcard "*"]]
-            [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]]]])))
+            [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]
+            [[:directory "/usr/bin/"]]]]])))
 
 (deftest defaults
   (is (= (process (sudoers (slurp "test/resources/defaults")))
