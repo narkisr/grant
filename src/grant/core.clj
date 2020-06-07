@@ -1,20 +1,15 @@
 (ns grant.core
   (:gen-class)
   (:require
-   [grant.extract]
+   [grant.extract :refer (search)]
    [grant.parse :refer (sudoers process)]
-   [grant.rules :refer (update-)]
    [cli-matic.core :refer (run-cmd)]))
 
-(defn analyse [{:keys [f]}]
-  (if (.contains (System/getProperty "java.vm.name") "OpenJDK")
-    #_(let [facts (search (process (sudoers f)))]
-        (update- facts))
-    (do
-      (println "this command is only available on the OpenJDK binary, native binary doesn't support it at the moment")
-      (System/exit 1))))
-
-(defn extract [{:keys [f p]}])
+(defn analyse [{:keys [f p]}]
+  (let [detected (search (process (sudoers f)))]
+    (if p
+      (clojure.pprint/pprint detected)
+      (println detected))))
 
 (defn parse [{:keys [f p]}]
   (let [data (process (sudoers f))]
@@ -33,10 +28,6 @@
                   :description "Parse and extract facts and run analysis rules on top of them reporting security issues"
                   :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]
                   :runs        analyse}
-                 {:command     "extract"
-                  :description "Parse sudoers file and extract facts and list them (no analysis)"
-                  :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]
-                  :runs        extract}
                  {:command     "parse"
                   :description "Parse the provided file and print its output in an edn format"
                   :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]

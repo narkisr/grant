@@ -22,6 +22,9 @@
                       (m/$ [:user-spec [[:user ?user]] ?host (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
                       {:type :user-spec :user ?user :host ?host :command ?command :violation :rule-2})))
 
+(defn search [ast]
+  (clojure.set/union (wildcards-usage ast) (folder-usage ast)))
+
 (comment
   (wildcards-usage (grant.parse/process (grant.parse/sudoers (slurp "test/resources/cmnd-aliases"))))
   (folder-usage (grant.parse/process (grant.parse/sudoers (slurp "test/resources/cmnd-aliases"))))
