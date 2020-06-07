@@ -8,7 +8,7 @@ This allows the user to /bin/cp which means he can replace any file under /bin/
 
 # Solution
 
-Enumerate allowed commands lists with full paths (and hashes) 
+Enumerate allowed commands lists with full paths (and hashes)
 
 
 # Rule 2
@@ -121,3 +121,26 @@ Scan existing sudoers files with grant to detect such cases:
    grant analyse --input /etc/sudoers.d/foo
 
 Allow only verified binaries to run from root owned libraies
+
+
+
+# Rule 7
+
+Make sure to have env_check and env_reset enabled globally, sudo env_check will sanitize passed in environment variables (removing '/' and '%' and preventing changes to TZ_) and should be kept enabled:
+
+   Defaults !env_check
+
+Env reset make sure that the calling service environment variables will not pass in to the invoked sudo command target (preventing malicious override):
+
+   Defaults !env_reset
+
+
+Solution:
+
+Don't include !env_reset or !env_check in cases that adding environment variables is required make sure to specify them explicitly for a specific user and binary:
+
+         Defaults!/bin/special env_keep += "YOUR_VAR"
+
+	   sensative_user ALL = ALL: /bin/special
+
+
