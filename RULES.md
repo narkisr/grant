@@ -36,7 +36,7 @@ Grant will expand the list for us and create an aliase that we can use and valid
 
 
 # Rule 3
-Dont allow ALL for cmnd aliases in user spec
+Dont use NOPASSWD tag in user spec
 
    foo ALL = NOPASSWD:EXEC ALL
 
@@ -48,11 +48,11 @@ Enumerate the entire set of allowed commands and args using grant:
 
 Or use a spec file to pass in allow commands and args:
 
-   grant cmnd-alias --cmnd-spec commands.edn
+   grant generate --spec sudoers-spec.edn
 
 
 # Rule 4
-Never use negation in command lists:
+Never use negation in command lists in order to exclude commands in a user-spec:
 
 
      Cmnd_Alias BLACKLIST = /usr/bin/sudo, /usr/bin/bash, /usr/bin/sh
