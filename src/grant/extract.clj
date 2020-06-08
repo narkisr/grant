@@ -22,24 +22,25 @@
                       (m/$ [:user-spec [[:user ?user]] ?host (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
                       {:type :user-spec :user ?user :host ?host :command ?command :violation :rule-2})))
 
-(defn nopasswd-tag-violations
-  "NOPASSWD tag is used in user-spec, violation of Rule 3"
+(defn nopasswd-violations
+  "NOPASSWD tag is used in user-spec followed by an ALL alias, violation of Rule 3"
   [m]
-  (into #{} (m/search m
-                      (m/$ [:user-spec [[:user ?user]] ?host  (m/scan (m/pred (partial some (fn [[k v]] (and (= k :tag) (= v "NOPASSWD:")))) ?command))])
-                      {:type :cmnd-alias :user ?user :command ?command :violation :rule-3})))
+  (let [nopasswd #{[:tag "NOPASSWD:"]} all #{[[:alias-name "ALL"]]}]
+    (into #{} (m/search m
+                        (m/$ [:user-spec [[:user ?user]] ?host  (m/scan (m/pred (fn [v] (and (some nopasswd v) (some all v))) ?command))])
+                        {:type :cmnd-alias :user ?user :command ?command :violation :rule-3}))))
 
-(defn negation-command-list-violations
-  "Negation is used with in user-spec to exclude"
+(defn negation-violations
+  "Negation is used with in user-spec to exclude command, Rule 4"
   [m]
   (into #{} (m/search m
                       (m/$ [:user-spec [[:user ?user]] ?host  (m/scan (m/pred (partial some (fn [[k v]] (and (= k :not) (= (first v) :alias-name)))) ?command))])
                       {:type :cmnd-alias :user ?user :command ?command :violation :rule-4})))
 
 (defn search [ast]
-  (let [checks [wildcard-violations folder-violations nopasswd-tag-violations negation-command-list-violations]]
+  (let [checks [wildcard-violations folder-violations nopasswd-violations negation-violations]]
     (apply clojure.set/union (map (fn [f] (f ast)) checks))))
 
 (comment
-  (negation-command-list-violations (grant.parse/process (grant.parse/sudoers (slurp "test/resources/combined"))))
-  (nopasswd-tag-violations (grant.parse/process (grant.parse/sudoers (slurp "test/resources/combined")))))
+  (negation-violations (grant.parse/process (grant.parse/sudoers (slurp "test/resources/combined"))))
+  (nopasswd-violations (grant.parse/process (grant.parse/sudoers "re-ops ALL=(ALL) NOPASSWD: ALL"))))

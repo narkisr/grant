@@ -36,7 +36,7 @@ Grant will expand the list for us and create an aliase that we can use and valid
 
 
 # Rule 3
-Dont use NOPASSWD tag in user spec
+Dont use NOPASSWD tag followed by an ALL in user spec
 
    foo ALL = NOPASSWD:EXEC ALL
 
