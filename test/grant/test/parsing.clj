@@ -86,4 +86,5 @@
             [[:file "/usr/bin/apt-get"] [:arg "install"] [:wildcard "*"] [:flag "-y"]]
             [[:file "/usr/sbin/ufw"] [:arg "status"]]
             [[:file "/usr/bin/nmap"] [:wildcard "*"]]
-            [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]]]])))
+            [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]
+            [[:not [:alias-name "C_PIPES"]]]]]])))
