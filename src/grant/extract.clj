@@ -16,11 +16,14 @@
 (defn wildcard-violations
   "Wildcards used in user spec or cmnd alias, this is a violation of Rule 2"
   [m]
-  (into #{} (m/search m
-                      (m/$ [:cmnd-alias ?alias-name (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
-                      {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-2}
-                      (m/$ [:user-spec ?users ?hosts (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
-                      {:type :user-spec :users ?users :hosts ?hosts :command ?command :violation :rule-2})))
+  (into #{}
+        (m/search m
+                  (m/$ [:cmnd-alias ?alias-name
+                        (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
+                  {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-2}
+                  (m/$ [:user-spec ?users ?hosts
+                        (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
+                  {:type :user-spec :users ?users :hosts ?hosts :command ?command :violation :rule-2})))
 
 (defn nopasswd-violations
   "NOPASSWD tag is used in user-spec followed by an ALL alias, violation of Rule 3"
@@ -37,9 +40,11 @@
 (defn negation-violations
   "Negation is used with in user-spec to exclude command, Rule 4"
   [m]
-  (into #{} (m/search m
-                      (m/$ [:user-spec [[:user ?user]] ?host  (m/scan (m/pred (partial some (fn [[k v]] (and (= k :not) (= (first v) :alias-name)))) ?command))])
-                      {:type :cmnd-alias :user ?user :command ?command :violation :rule-4})))
+  (into #{}
+        (m/search m
+                  (m/$ [:user-spec [[:user ?user]] ?host
+                        (m/scan (m/pred (partial some (fn [[k v]] (and (= k :not) (= (first v) :alias-name)))) ?command))])
+                  {:type :cmnd-alias :user ?user :command ?command :violation :rule-4})))
 
 (defn search [ast]
   (let [checks [wildcard-violations folder-violations nopasswd-violations negation-violations]]
