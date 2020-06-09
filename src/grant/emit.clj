@@ -3,6 +3,7 @@
   (:require
    [clojure.core.match :refer [match]]
    [clojure.walk :as w]
+   [clojure.string :refer (join)]
    [clojure.core.strint :refer (<<)]))
 
 (defn emit-defaults [ast]
@@ -17,10 +18,24 @@
        [[:identifier i]]  i
        [[:value [_ i]]] i
        [[:subtract f s]]  (str f "-=" s)
+       [[:add f s]]  (str f "+=" s)
        [[:equals f s]]  (str f "=" s)
        :else  v)) ast))
 
-(defn emit-user-spec [ast])
+(defn emit-user-spec [ast]
+  (w/postwalk
+   (fn [v]
+     (match [v]
+       [[:user-spec users hosts & [cmds]]] [(join "," (map second users)) (join "," (map (comp second second) hosts)) "=" (join "," (map (comp (partial join " ") flatten) cmds))]
+       [[:runas & [aliases]]] (str "(" (join "," aliases) ") ")
+       [[:tags tags]] (str (join ":" tags) ":")
+       [[:tag tag]] tag
+       [[:file file]] file
+       [[:arg arg]] arg
+       [[:alias alias-name]] alias-name
+       [[:alias-name alias-name]] alias-name
+       [[:directory directory]] directory
+       :else v)) ast))
 
 (defn emit
   "Processing sudoers file ast form and generating a string output"
@@ -40,16 +55,4 @@
                    [[:file "/usr/bin/tee"] [:wildcard "*"]]
                    [[:file "/usr/bin/tee"] [:flag "-a"] [:wildcard "*"]]])
 
-  (def user-spec [:user-spec
-                  [[:user "re-ops"]]
-                  [[:hosts "ALL"]]
-                  [[[:tag "NOPASSWD"] [:alias-name "C_SERVICE"]] [[:alias-name "C_KERNEL"]]]])
-
-  (def default-simple [:default [[[:identifier "exempt_group"] [:value [:user "re-ops"]]]]])
-
-  (def subtract-default)
-
-  (def run-as-default [:default/runas "root" [[[:equals [:identifier "set_logname"] [:value [:user "foo"]]]]]])
-
-  (emit subtract-default)
-  (emit run-as-default))
+  (emit user-spec))
