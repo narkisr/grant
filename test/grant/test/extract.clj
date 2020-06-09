@@ -14,7 +14,7 @@
   (let [cmnd-folder (folder-violations (process (sudoers (slurp "test/resources/cmnd-aliases"))))
         user-folders (folder-violations (process (sudoers (slurp "test/resources/single-line-no-passwd"))))]
     (is (= (count cmnd-folder) 1))
-    (is (= (count  user-folders) 1))))
+    (is (= (count user-folders) 1))))
 
 (deftest negation
   (let [negtaions (negation-violations (process (sudoers (slurp "test/resources/combined"))))]
