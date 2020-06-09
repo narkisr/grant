@@ -43,9 +43,9 @@
   (is (= (process (sudoers (slurp "test/resources/single-line-no-passwd")))
          [:sudoers
           [:user-spec
-           [[:user "re-ops"]]
+           [[:user "re-ops"] [:user "foo"]]
            [[:host [:hostname "ALL"]]]
-           [[[:runas [:alias "ALL"]] [:tag "NOPASSWD:"] [[:file "/usr/bin/apt"] [:arg "update"]]]
+           [[[:runas [[:alias-name "ALL"] [:alias-name "ADMINS"]]] [:tags [[:tag "NOPASSWD"] [:tag "EXEC"]]] [[:file "/usr/bin/apt"] [:arg "update"]]]
             [[:file "/usr/bin/apt"] [:arg "upgrade"] [:flag "-y"]]
             [[:file "/usr/bin/purge-kernels"]]
             [[:file "/usr/bin/apt-cleanup"]]
@@ -79,7 +79,7 @@
           [:user-spec
            [[:user "re-ops"]]
            [[:host [:hostname "ALL"]]]
-           [[[:runas [:alias "ALL"]] [:tag "NOPASSWD:"] [[:file "/usr/bin/apt"] [:arg "update"]]]
+           [[[:runas [[:alias-name "ALL"]]] [:tags [[:tag "NOPASSWD"]]] [[:file "/usr/bin/apt"] [:arg "update"]]]
             [[:file "/usr/bin/apt"] [:arg "upgrade"] [:flag "-y"]]
             [[:file "/usr/bin/purge-kernels"]]
             [[:file "/usr/bin/apt-cleanup"]]

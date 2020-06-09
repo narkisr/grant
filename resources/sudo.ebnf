@@ -87,17 +87,18 @@ host-list ::= (host | host <','>)+
 
 cmnd-spec-list ::= (cmnd-spec | cmnd-spec <','>)+
 
-cmnd-spec ::= runas-spec? selinux-spec? tag-spec* cmnd
+cmnd-spec ::= runas-spec? selinux-spec? tag-spec? cmnd
 
 runas-spec ::= <'('> runas-list? (<':'> runas-list)? <')'>
 
 selinux-spec ::= ('ROLE=role' | 'TYPE=type')
 
-tag-spec ::= ('EXEC:' | 'NOEXEC:' | 'FOLLOW:' | 'NOFOLLOW' |
-              'LOG_INPUT:' | 'NOLOG_INPUT:' | 'LOG_OUTPUT:' |
-              'NOLOG_OUTPUT:' | 'MAIL:' | 'NOMAIL:' | 'PASSWD:' |
-              'NOPASSWD:' | 'SETENV:' | 'NOSETENV:')
+tag ::= ('EXEC' | 'NOEXEC' | 'FOLLOW' | 'NOFOLLOW' |
+              'LOG_INPUT' | 'NOLOG_INPUT' | 'LOG_OUTPUT' |
+              'NOLOG_OUTPUT' | 'MAIL' | 'NOMAIL' | 'PASSWD' |
+              'NOPASSWD' | 'SETENV' | 'NOSETENV')
 
+tag-spec = (tag | tag <':'>)*
 
 (* Defaults *)
 default-type ::= <'@'> host-list |

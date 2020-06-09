@@ -44,8 +44,9 @@
        [[:user-spec [:user-list & users] [:host-list & hosts] [:cmnd-spec-list & commands]]] [:user-spec users hosts commands]
        [[:cmnd-spec spec]] spec
        [[:cmnd-spec & spec]] spec
-       [[:runas-spec [:runas-list [:runas-member [:alias-name alias-name]]]]] [:runas [:alias alias-name]]
-       [[:tag-spec tag]] [:tag tag]
+       [[:runas-spec [:runas-list & items]]] [:runas items]
+       [[:tag-spec & tags]] [:tags tags]
+       [[:runas-member [:alias-name alias-name]]] [:alias-name alias-name]
        [[:cmnd [:commandname & commands]]] commands
        [[:cmnd [:alias-name alias-name]]] [[:alias-name alias-name]]
        [[:cmnd "!" cmd]] [[:not cmd]]
