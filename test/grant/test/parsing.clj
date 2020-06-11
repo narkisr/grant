@@ -12,7 +12,15 @@
             [[:file "/bla/bla"] [:flag "-a"] [:wildcard "*"] [:directory "/tmp/bla/"] [:arg "yeap"]]
             [[:directory "/bin/"] [:wildcard "*"] [:arg "'one'"]]]]])))
 
-(deftest cmd-aliases
+(deftest digest-alias
+  (is (= (process (sudoers "Cmnd_Alias F = \\ \n /bin/foo , sha224: 9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651 /foo/bar , /tmp/bla/"))
+         [:sudoers
+          [:cmnd-alias "F"
+           [[[:file "/bin/foo"]]
+            [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
+            [[:directory "/tmp/bla/"]]]]])))
+
+(deftest cmnd-aliases
   (let [data (process (sudoers (slurp "test/resources/cmnd-aliases")))
         names #{"C_PIPES" "C_PKG" "C_KERNEL" "C_SERVICE" "C_SYSTEMCTL" "C_USER" "C_SECURITY" "C_DISK" "C_VIRTUAL"}
         aliases (filter #(= (first %) :cmnd-alias) (rest data))]

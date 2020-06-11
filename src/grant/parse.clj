@@ -35,6 +35,7 @@
      (match [v]
        [[:cmnd-alias [:alias-name alias-name] [:cmnd-list & cmnd-list]]] [:cmnd-alias alias-name cmnd-list]
        [[:cmnd [:commandname & commands]]] commands
+       [[:cmnd [:digest-spec sha [:digest digest]] [:commandname & commands]]] (into [[:sha sha] [:digest digest]] commands)
        :else v)) a))
 
 (defn user-spec [u]

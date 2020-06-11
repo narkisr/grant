@@ -33,7 +33,14 @@ commandname ::= file (wildcard | flag | arg | file  | directory | '""'  | end-of
 
 cmnd-list ::= (cmnd {<','>} | cmnd {<','>} <'\\'> <'\n'> | cmnd <'\n'>)+
 
-cmnd ::= '!'* commandname | '!'* "sudoedit" | '!'* alias-name <(#'\s*\n')?>
+digest ::= #'[A-Fa-f0-9]+'
+
+digest-spec ::= "sha224" <':'> digest |
+		    "sha256" <':'> digest |
+		    "sha384" <':'> digest |
+		    "sha512" <':'> digest
+
+cmnd ::= digest-spec? '!'* commandname | '!'* "sudoedit" | '!'* alias-name <(#'\s*\n')?>
 
 
 (* Runas *)
