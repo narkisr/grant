@@ -37,6 +37,16 @@
        [[:directory directory]] directory
        :else v)) ast))
 
+(defn emit-cmnd-alias [ast]
+  (w/postwalk
+   (fn [v]
+     (match [v]
+       [[:cmnd-alias name cmds]] [(str "Cmnd_Alias " name " = \\ \n") (join ", \\ \n " (map (partial join ", ") (partition 2 (flatten cmds))))]
+       [[[:sha sha] [:digest digest] & r]] [(str sha ":" digest) (join " " r)]
+       [[:directory directory]] directory
+       [[:file file]] file
+       :else v)) ast))
+
 (defn emit
   "Processing sudoers file ast form and generating a string output"
   [ast]
@@ -48,11 +58,15 @@
        [[:default/cmnd-alias _ _]] (emit-defaults v)
        [[:default & _]] (emit-defaults v)
        [[:user-spec _ _ _]] (emit-user-spec v)
+       [[:cmnd-alias _ _]] (emit-cmnd-alias v)
        :else v)) ast))
 
 (comment
-  (def cmnd-alias [:cmnd-alias "C_PIPES"
-                   [[:file "/usr/bin/tee"] [:wildcard "*"]]
-                   [[:file "/usr/bin/tee"] [:flag "-a"] [:wildcard "*"]]])
+  (def cmnd-alias
+    [:sudoers
+     [:cmnd-alias "F"
+      [[[:file "/bin/foo"]]
+       [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
+       [[:directory "/tmp/bla/"]]]]])
 
-  (emit user-spec))
+  (println (emit cmnd-alias)))
