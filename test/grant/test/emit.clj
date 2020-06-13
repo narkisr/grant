@@ -14,15 +14,24 @@
     (is (= (emit cmnd-default) ["Defaults!PAGERS" "noexec"]))
     (is (= (emit subtract-default) ["Defaults" "!env_reset,env_delete-=PATH"]))))
 
-(def simple-spec
-  [:sudoers
-   [:user-spec
-    [[:user "re-ops"] [:user "me"]]
-    [[:host [:hostname "ALL"]] [:host [:hostname "bar"]]]
-    [[[:runas [[:alias "ALL"]]] [:tags [[:tag "NOPASSWD"] [:tag "EXEC"]]] [[:file "/usr/bin/apt"] [:arg "update"]]]
-     [[:file "/usr/sbin/ufw"] [:arg "status"]]
-     [[:directory "/usr/bin/"]]]]])
-
 (deftest user-spec
-  (= (second (emit simple-spec))
+  (= (second
+      (emit
+       [:sudoers
+        [:user-spec
+         [[:user "re-ops"] [:user "me"]]
+         [[:host [:hostname "ALL"]] [:host [:hostname "bar"]]]
+         [[[:runas [[:alias "ALL"]]] [:tags [[:tag "NOPASSWD"] [:tag "EXEC"]]] [[:file "/usr/bin/apt"] [:arg "update"]]]
+          [[:file "/usr/sbin/ufw"] [:arg "status"]]
+          [[:directory "/usr/bin/"]]]]]))
      ["re-ops,me" "ALL,bar" "=" "(ALL)  NOPASSWD: /usr/bin/apt update,/usr/sbin/ufw status,/usr/bin/"]))
+
+(deftest cmnd-aliases
+  (= (second
+      (emit
+       [:sudoers
+        [:cmnd-alias "F"
+         [[[:file "/bin/foo"]]
+          [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
+          [[:directory "/tmp/bla/"]]]]]))
+     ["Cmnd_Alias F = \\ \n" "/bin/foo, sha224:9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651, \\ \n /foo/bar, /tmp/bla/"]))
