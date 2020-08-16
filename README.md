@@ -1,9 +1,13 @@
 # Intro
 
-Not ready yet
+This project aims to simplify the creations of secure sudoers file, main goals:
+
+* Reduce ambiguity and mis-configuration by aligning to existing best practices.
+* Automate the creation of checksums, binary options etc..
+* Set secure defaults.
+* Warn when non-secure settings are found
 
 [![Build Status](https://travis-ci.org/narkisr/grant.png)](https://travis-ci.org/narkisr/grant)
-
 
 # Usage
 
