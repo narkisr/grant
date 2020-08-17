@@ -19,11 +19,15 @@
 
      ; rules
      [meander/epsilon "0.0.421"]
-     [com.cerner/clara-rules "0.20.0"]
-     [prismatic/schema "1.1.6"]
 
      ; emit
      [org.clojure/core.match "1.0.0"]
+
+     ; json
+     [org.clojure/data.json "1.0.0"]
+
+     ; checksum binaries
+     [digest "1.4.9"]
   ]
 
   :profiles {
