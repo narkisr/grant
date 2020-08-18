@@ -19,7 +19,7 @@
       (println data))))
 
 (defn generate [{:keys [f]}]
-  (spit-sudoers f))
+  (spit "/tmp/1" (spit-sudoers f)))
 
 (def cli
   {:app {:command     "grant"
@@ -38,7 +38,7 @@
                   :runs        parse}
                  {:command     "generate"
                   :description "Generate a sudoers file from a provide specification"
-                  :opts        [{:option "f" :as "file" :type :edn}]
+                  :opts        [{:option "f" :as "file" :type :ednfile}]
                   :runs        generate}]})
 
 (defn -main [& args]
