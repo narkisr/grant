@@ -41,10 +41,12 @@
   (w/postwalk
    (fn [v]
      (match [v]
-       [[:cmnd-alias name cmds]] [(str "Cmnd_Alias " name " = \\ \n") (join ", \\ \n " (map (partial join ", ") (partition 2 (flatten cmds))))]
-       [[[:sha sha] [:digest digest] & r]] [(str sha ":" digest) (join " " r)]
+       [[:cmnd-alias name cmds]] [(str "Cmnd_Alias " name " = \\ \n") (join ", \\ \n " (flatten cmds))]
+       [[[:sha sha] [:digest digest] file & r]] [(str sha ":" digest " " file " " (join " " r))]
        [[:directory directory]] directory
        [[:file file]] file
+       [[:arg arg]] arg
+       [[:flag flag]] flag
        :else v)) ast))
 
 (defn emit
@@ -65,8 +67,8 @@
   (def cmnd-alias
     [:sudoers
      [:cmnd-alias "F"
-      [[[:file "/bin/foo"]]
-       [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
-       [[:directory "/tmp/bla/"]]]]])
+      [[[:file "/bin/1"]]
+       [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/bin/2"] [:arg "foo"]]
+       [[:directory "/bin/3"]]]]])
+  (emit cmnd-alias))
 
-  (println (emit cmnd-alias)))

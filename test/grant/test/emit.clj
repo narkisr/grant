@@ -34,4 +34,7 @@
          [[[:file "/bin/foo"]]
           [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
           [[:directory "/tmp/bla/"]]]]]))
-     ["Cmnd_Alias F = \\ \n" "/bin/foo, sha224:9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651, \\ \n /foo/bar, /tmp/bla/"]))
+     ["Cmnd_Alias F = \\ \n"
+      "/bin/foo, \\ \n 
+       sha224:9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651 /foo/bar, \\ \n
+       /tmp/bla"]))
