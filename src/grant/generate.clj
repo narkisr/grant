@@ -2,9 +2,20 @@
   "Generate a secure default version of a sudoers file based on the provided spec"
   (:require
    [digest :refer [sha-256]]
-   [grant.emit :refer [emit]]
+   [clojure.math.combinatorics :as combo]
    [clojure.java.io :refer [as-file]]
    [clojure.core.strint :refer (<<)]))
+
+(defn arg-ast [[k v]]
+  [(keyword (name k)) v])
+
+(defn args-seq [[k v]]
+  (case k
+    :args/one-of (map arg-ast v)
+    [(arg-ast [k v])]))
+
+(defn args-ast [prefix args]
+  (map (fn [branch] (into prefix branch)) (apply combo/cartesian-product (map args-seq args))))
 
 (defn group-name [k]
   (clojure.string/upper-case (name k)))
@@ -26,7 +37,7 @@
   "Create aliases AST's"
   [{:keys [:command/group :command/binary :command/args]}]
   [:cmnd-alias (group-name group)
-   [[[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]]]])
+   [(args-ast [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]] args)]])
 
 (defn generate-spec [{:keys [:sudoers/commands :sudoers/users]}]
   (into [:sudoers]
@@ -35,6 +46,9 @@
          (map user-spec-ast users))))
 
 (comment
-  (require '[clojure.edn :as edn])
-  (def spec (edn/read-string (slurp "resources/spec.edn")))
-  (emit (generate-spec spec)))
+  (require
+   '[grant.emit :refer [emit]]
+   '[clojure.edn :as edn])
+  (def spec (edn/read-string (slurp "test/resources/spec.edn")))
+  (doseq [lines (second (emit (generate-spec spec)))]
+    (println lines)))
