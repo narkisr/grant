@@ -3,6 +3,7 @@
   (:require
    [digest :refer [sha-256]]
    [clojure.math.combinatorics :as combo]
+   [grant.emit :refer [emit]]
    [clojure.java.io :refer [as-file]]
    [clojure.core.strint :refer (<<)]))
 
@@ -45,10 +46,10 @@
          (map command-alias-ast commands)
          (map user-spec-ast users))))
 
+(defn spit-sudoers [spec]
+  (clojure.string/join " " (flatten (rest (emit (generate-spec spec))))))
+
 (comment
-  (require
-   '[grant.emit :refer [emit]]
-   '[clojure.edn :as edn])
+  (require '[clojure.edn :as edn])
   (def spec (edn/read-string (slurp "test/resources/spec.edn")))
-  (doseq [lines (second (emit (generate-spec spec)))]
-    (println lines)))
+  (clojure.string/join " " (flatten (rest (emit (generate-spec spec))))))
