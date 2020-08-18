@@ -26,8 +26,11 @@
      ; json
      [org.clojure/data.json "1.0.0"]
 
-     ; checksum binaries
+     ; checksum binaries during generation
      [digest "1.4.9"]
+
+     ; cartesian product
+     [org.clojure/math.combinatorics "0.1.6"]
   ]
 
   :profiles {
