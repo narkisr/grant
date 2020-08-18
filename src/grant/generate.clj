@@ -11,11 +11,11 @@
 
 (defn args-seq [[k v]]
   (case k
-    :args/one-of (map arg-ast v)
+    :args/one-of (mapv arg-ast v)
     [(arg-ast [k v])]))
 
 (defn args-ast [prefix args]
-  (map (fn [branch] (into prefix branch)) (apply combo/cartesian-product (map args-seq args))))
+  (mapv (fn [branch] (into prefix branch)) (apply combo/cartesian-product (map args-seq args))))
 
 (defn group-name [k]
   (clojure.string/upper-case (name k)))
@@ -37,7 +37,7 @@
   "Create aliases AST's"
   [{:keys [:command/group :command/binary :command/args]}]
   [:cmnd-alias (group-name group)
-   [(args-ast [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]] args)]])
+   (args-ast [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]] args)])
 
 (defn generate-spec [{:keys [:sudoers/commands :sudoers/users]}]
   (into [:sudoers]

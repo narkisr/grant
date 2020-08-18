@@ -25,11 +25,13 @@
   (require
    'grant.test.emit
    'grant.test.extract
+   'grant.test.generate
    'grant.test.parsing))
 
 (defn run-tests []
   (clojure.test/run-tests
    'grant.test.extract
+   'grant.test.generate
    'grant.test.emit
    'grant.test.parsing))
 
