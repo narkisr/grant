@@ -4,13 +4,13 @@
     :command/group :service
     :command/binary "/usr/sbin/service"
     :command/args [
-       [:args/one-of 
+       [:args/one-of
           #{[:args/arg "ssh"]
             [:args/arg "docker-compose@elasticsearch"]}]
-       [:args/one-of 
-          #{[:args/arg "stop"] 
-            [:args/arg "start"] 
-            [:args/arg "restart"] 
+       [:args/one-of
+          #{[:args/arg "stop"]
+            [:args/arg "start"]
+            [:args/arg "restart"]
             [:args/arg "status"]}]
     ]
    }{
@@ -25,8 +25,8 @@
     :command/binary "/usr/bin/dpkg"
     :command/args [
        [:args/flag "-i"]
-       [:args/one-of 
-         #{[:args/file "osquery_3.3.2_1.linux.amd64.deb" ] 
+       [:args/one-of
+         #{[:args/file "osquery_3.3.2_1.linux.amd64.deb" ]
            [:args/file "bat_0.12.1_amd64.deb"]}]
     ]
    }
