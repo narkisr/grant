@@ -1,7 +1,7 @@
 (ns grant.core
   (:gen-class)
   (:require
-   [grant.generate :refer (spit-sudoers)]
+   [grant.generate :refer (create-sudoers)]
    [grant.extract :refer (search)]
    [grant.parse :refer (sudoers process)]
    [cli-matic.core :refer (run-cmd)]))
@@ -18,8 +18,8 @@
       (clojure.pprint/pprint data)
       (println data))))
 
-(defn generate [{:keys [f]}]
-  (spit "/tmp/1" (spit-sudoers f)))
+(defn generate [{:keys [f t]}]
+  (spit t (create-sudoers f)))
 
 (def cli
   {:app {:command     "grant"
@@ -38,7 +38,7 @@
                   :runs        parse}
                  {:command     "generate"
                   :description "Generate a sudoers file from a provide specification"
-                  :opts        [{:option "f" :as "file" :type :ednfile}]
+                  :opts        [{:option "f" :as "file" :type :ednfile} {:option "t" :as "target" :type :string}]
                   :runs        generate}]})
 
 (defn -main [& args]
