@@ -46,10 +46,11 @@
          (map command-alias-ast commands)
          (map user-spec-ast users))))
 
-(defn spit-sudoers [spec]
-  (clojure.string/join "\n \n" (map clojure.string/join (rest (emit (generate-spec spec))))))
+(defn create-sudoers [spec]
+  (clojure.string/join "\n\n" (map clojure.string/join (rest (emit (generate-spec spec))))))
 
 (comment
   (require '[clojure.edn :as edn])
   (def spec (edn/read-string (slurp "test/resources/spec.edn")))
-  (clojure.string/join "\n \n" (map (partial clojure.string/join "") (rest (emit (generate-spec spec))))))
+  (clojure.string/join "\n\n" (map (partial clojure.string/join "") (rest (emit (generate-spec spec))))))
+
