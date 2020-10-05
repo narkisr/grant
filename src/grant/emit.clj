@@ -3,8 +3,7 @@
   (:require
    [clojure.core.match :refer [match]]
    [clojure.walk :as w]
-   [clojure.string :refer (join)]
-   [clojure.core.strint :refer (<<)]))
+   [clojure.string :refer (join)]))
 
 (defn emit-defaults [ast]
   (w/postwalk
