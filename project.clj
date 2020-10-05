@@ -31,6 +31,8 @@
 
      ; cartesian product
      [org.clojure/math.combinatorics "0.1.6"]
+
+     [com.rpl/specter "1.1.3"]
   ]
 
   :profiles {

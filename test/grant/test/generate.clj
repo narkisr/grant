@@ -3,9 +3,10 @@
   (:require
    [clojure.edn :as edn]
    [grant.generate :refer [generate-spec]]
+   [grant.spec :refer [load-spec]]
    [clojure.test :refer :all]))
 
-(def spec (edn/read-string (slurp "test/resources/spec.edn")))
+(def spec (load-spec "test/resources/spec.edn"))
 
 (def package-ast
   [:cmnd-alias
@@ -14,12 +15,12 @@
      [:digest ""]
      [:file "/usr/bin/dpkg"]
      [:flag "-i"]
-     [:file "bat_0.12.1_amd64.deb"]]
+     [:file "osquery_3.3.2_1.linux.amd64.deb"]]
     [[:sha "sha256"]
      [:digest ""]
      [:file "/usr/bin/dpkg"]
      [:flag "-i"]
-     [:file "osquery_3.3.2_1.linux.amd64.deb"]]]])
+     [:file "bat_0.12.1_amd64.deb"]]]])
 
 (def user-spec-ast
   [:user-spec
