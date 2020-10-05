@@ -4,19 +4,14 @@
    [digest :refer [sha-256]]
    [clojure.math.combinatorics :as combo]
    [grant.emit :refer [emit]]
-   [clojure.java.io :refer [as-file]]
-   [clojure.core.strint :refer (<<)]))
+   [grant.spec :refer [load-spec]]
+   [clojure.java.io :refer [as-file]]))
 
 (defn arg-ast [[k v]]
   [(keyword (name k)) v])
 
-(defn args-seq [[k v]]
-  (case k
-    :args/one-of (mapv arg-ast v)
-    [(arg-ast [k v])]))
-
 (defn args-ast [prefix args]
-  (mapv (fn [branch] (into prefix branch)) (apply combo/cartesian-product (map args-seq args))))
+  (mapv (fn [branch] (into prefix branch)) args))
 
 (defn group-name [k]
   (clojure.string/upper-case (name k)))
@@ -50,7 +45,6 @@
   (clojure.string/join "\n\n" (map clojure.string/join (rest (emit (generate-spec spec))))))
 
 (comment
-  (require '[clojure.edn :as edn])
-  (def spec (edn/read-string (slurp "test/resources/spec.edn")))
-  (clojure.string/join "\n\n" (map (partial clojure.string/join "") (rest (emit (generate-spec spec))))))
+  (def spec (load-spec "test/resources/spec.edn"))
+  (println (clojure.string/join "\n\n" (map (partial clojure.string/join "") (rest (emit (generate-spec spec)))))))
 
