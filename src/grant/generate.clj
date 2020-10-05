@@ -23,11 +23,11 @@
 
 (defn user-spec-ast
   "convert user to AST form"
-  [{:keys [:user/name :command/groups]}]
+  [{:keys [:user/name :command/groups :tags]}]
   [:user-spec
    [[:user name]]
    [[:host [:hostname "ALL"]]]
-   [[[:tags [[:tag "NOPASSWD"]]] (alias-ast groups)]]])
+   [[[:tags (mapv (fn [t] [:tag t]))] (alias-ast groups)]]])
 
 (defn command-alias-ast
   "Create aliases AST's"
