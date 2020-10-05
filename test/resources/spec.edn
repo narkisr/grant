@@ -19,9 +19,15 @@
     :command/binary "/usr/bin/dpkg"
     :command/args [[:flag "-i"] #{[:file "bat_0.12.1_amd64.deb"] [:file "osquery_3.3.2_1.linux.amd64.deb"]}]
    }
+   {
+    :command/group :exec
+    :command/binary "/usr/sbin/visudo"
+   }
  }
 
+
  :sudoers/users #{
-   {:user/name "re-ops" :command/groups #{:virtual}}
+   {:user/name "re-ops" :command/groups #{:virtual} :tags #{"NOPASSWD"}}
+   {:user/name "%wheel" :command/groups #{:exec} :tags #{"EXEC"}}
  }
 }

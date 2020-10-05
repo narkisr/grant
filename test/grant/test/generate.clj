@@ -6,8 +6,6 @@
    [grant.spec :refer [load-spec]]
    [clojure.test :refer :all]))
 
-(def spec (load-spec "test/resources/spec.edn"))
-
 (def package-ast
   [:cmnd-alias
    "PACKAGE"
@@ -40,6 +38,6 @@
       (mapv (fn [[k v]] (if (= k :digest) [:digest ""] [k v])) cmd)) commands)])
 
 (deftest basic-spec
-  (let [generated (generate-spec spec)]
+  (let [generated (generate-spec (load-spec "test/resources/spec.edn"))]
     (is (= (clear-digest (find-in (fn [v] (= (second v) "PACKAGE")) generated)) package-ast))
     (is (= (find-in (fn [v] (= :user-spec (first v))) generated) user-spec-ast))))
