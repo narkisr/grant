@@ -2,62 +2,67 @@
   "Spec into datoms"
   (:require
    [clojure.math.combinatorics :refer (cartesian-product)]
-   [com.rpl.specter :refer (ALL MAP-VALS  multi-path srange filterer transform select traverse keypath)]
+   [com.rpl.specter :refer (ALL transform cond-path must keypath)]
    [datascript.core :as d]
    [clojure.edn :as edn]))
 
-(def schema {:command/group {:db/type :db.type/identity}
-             :command/groups {:db/cardinality :db.cardinality/many}})
-
 (def db (d/create-conn))
+
+(defn load-facts [spec]
+  (d/transact! (d/create-conn) (into [] spec)))
 
 (defn load-spec [f]
   (let [spec (edn/read-string (slurp f))]
-    (transform [:sudoers/commands ALL :command/args]
-               (fn [args]
-                 (->> args
-                      (map (fn [a] (if (= (count (flatten a)) 2) #{a} a)))
-                      (apply cartesian-product))) spec)))
+    (:db-after
+     (load-facts
+      (transform [ALL (must :args)]
+                 (fn [args]
+                   (->> args
+                        (map (fn [a] (if (= (count (flatten a)) 2) #{a} a)))
+                        (apply cartesian-product))) spec)))))
 
-(defn load-facts [spec]
-  (d/transact! db (into [] (:sudoers/commands spec)))
-  (d/transact! db (into [] (:sudoers/users spec))))
-
-(defn services []
+(defn services [db]
   (d/q '[:find ?e
          :where
-         [?e :command/group :service]] @db))
+         [?e :group :service]] db))
 
-(defn user-commands [user]
+(defn user-commands [user db]
   (d/q '[:find ?bin ?args
          :in $ ?u
          :where
-         [?uid :user/name ?u]
-         [?uid :command/groups ?cmds]
-         [?cid :command/group ?g]
-         [?cid :command/binary ?bin]
-         [?cid :command/args ?args]
-         [(?cmds ?g)]] @db user))
+         [?uid :user ?u]
+         [?uid :groups ?cmds]
+         [?cid :group ?g]
+         [?cid :binary ?bin]
+         [?cid :args ?args]
+         [(?cmds ?g)]] db user))
 
-(defn user-groups [user]
+(defn user-groups [user db]
   (d/q '[:find ?groups .
          :in $ ?u
          :where
-         [?uid :user/name ?u]
-         [?uid :command/groups ?groups]] @db user))
+         [?uid :user ?u]
+         [?uid :groups ?groups]] db user))
 
-(defn missing-group? [group]
+(defn missing-group? [db group]
   (empty?
    (d/q '[:find ?cid
           :in $ ?g
           :where
-          [?cid :command/group ?g]] @db group)))
+          [?cid :group ?g]] db group)))
+
+(defn all [db ids]
+  (d/pull-many db ["*"] (flatten (into [] ids))))
+
+(defn users [db]
+  (all db (d/q '[:find ?e :where [?e :user _]] db)))
+
+(defn commands [db]
+  (all db (d/q '[:find ?g :where [?g :group _]] db)))
 
 (comment
-  (load-facts (load-spec "test/resources/spec.edn"))
-  (user-commands "ronen")
-  (user-groups "ronen")
-  (filter missing-group? (user-groups "re-ops"))
-  (services))
-
-
+  (def spec (load-spec "test/resources/spec.edn"))
+  (commands spec)
+  (user-groups "re-ops" spec)
+  (filter (partial missing-group? spec) (user-groups "re-ops" spec))
+  (services spec))
