@@ -11,15 +11,14 @@
 (defn load-facts [spec]
   (d/transact! (d/create-conn) (into [] spec)))
 
-(defn load-spec [f]
-  (let [spec (edn/read-string (slurp f))]
-    (:db-after
-     (load-facts
-      (transform [ALL (must :args)]
-                 (fn [args]
-                   (->> args
-                        (map (fn [a] (if (= (count (flatten a)) 2) #{a} a)))
-                        (apply cartesian-product))) spec)))))
+(defn load-spec [edn]
+  (:db-after
+   (load-facts
+    (transform [ALL (must :args)]
+               (fn [args]
+                 (->> args
+                      (map (fn [a] (if (= (count (flatten a)) 2) #{a} a)))
+                      (apply cartesian-product))) edn))))
 
 (defn services [db]
   (d/q '[:find ?e

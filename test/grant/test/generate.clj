@@ -38,6 +38,6 @@
       (mapv (fn [[k v]] (if (= k :digest) [:digest ""] [k v])) cmd)) commands)])
 
 (deftest basic-spec
-  (let [generated (generate (load-spec "test/resources/spec.edn"))]
+  (let [generated (generate (load-spec (edn/read-string (slurp "test/resources/spec.edn"))))]
     (is (= (clear-digest (find-in (fn [v] (= (second v) "PACKAGE")) generated)) package-ast))
     (is (= (find-in (fn [v] (= :user-spec (first v))) generated) user-spec-ast))))
