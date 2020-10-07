@@ -2,9 +2,8 @@
   "Generate a secure default version of a sudoers file based on the provided spec"
   (:require
    [digest :refer [sha-256]]
-   [clojure.math.combinatorics :as combo]
    [grant.emit :refer [emit]]
-   [grant.spec :refer [load-spec]]
+   [grant.spec :refer [users commands]]
    [clojure.java.io :refer [as-file]]))
 
 (defn arg-ast [[k v]]
@@ -23,28 +22,32 @@
 
 (defn user-spec-ast
   "convert user to AST form"
-  [{:keys [:user/name :command/groups :tags]}]
+  [{:keys [user groups tags]}]
   [:user-spec
-   [[:user name]]
+   [[:user user]]
    [[:host [:hostname "ALL"]]]
-   [[[:tags (mapv (fn [t] [:tag t]))] (alias-ast groups)]]])
+   [[[:tags (mapv (fn [t] [:tag t]) tags)] (alias-ast groups)]]])
 
 (defn command-alias-ast
   "Create aliases AST's"
-  [{:keys [:command/group :command/binary :command/args]}]
+  [{:keys [group binary args]}]
   [:cmnd-alias (group-name group)
    (args-ast [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]] args)])
 
-(defn generate-spec [{:keys [:sudoers/commands :sudoers/users]}]
+(defn generate [spec]
   (into [:sudoers]
         (concat
-         (map command-alias-ast commands)
-         (map user-spec-ast users))))
+         (map command-alias-ast (commands spec))
+         (map user-spec-ast (users spec)))))
+
+(defn string-form [output]
+  (clojure.string/join "\n\n" (map clojure.string/join output)))
 
 (defn create-sudoers [spec]
-  (clojure.string/join "\n\n" (map clojure.string/join (rest (emit (generate-spec spec))))))
+  (string-form (rest (emit (generate spec)))))
 
 (comment
   (def spec (load-spec "test/resources/spec.edn"))
+  (println (create-sudoers spec))
   (println (clojure.string/join "\n\n" (map (partial clojure.string/join "") (rest (emit (generate-spec spec)))))))
 

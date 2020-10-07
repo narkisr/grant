@@ -2,7 +2,7 @@
   "Testing spec generation output"
   (:require
    [clojure.edn :as edn]
-   [grant.generate :refer [generate-spec]]
+   [grant.generate :refer [generate]]
    [grant.spec :refer [load-spec]]
    [clojure.test :refer :all]))
 
@@ -38,6 +38,6 @@
       (mapv (fn [[k v]] (if (= k :digest) [:digest ""] [k v])) cmd)) commands)])
 
 (deftest basic-spec
-  (let [generated (generate-spec (load-spec "test/resources/spec.edn"))]
+  (let [generated (generate (load-spec "test/resources/spec.edn"))]
     (is (= (clear-digest (find-in (fn [v] (= (second v) "PACKAGE")) generated)) package-ast))
     (is (= (find-in (fn [v] (= :user-spec (first v))) generated) user-spec-ast))))
