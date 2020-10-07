@@ -1,6 +1,7 @@
 (ns grant.core
   (:gen-class)
   (:require
+   [grant.spec :refer (load-spec)]
    [grant.generate :refer (create-sudoers)]
    [grant.extract :refer (search)]
    [grant.parse :refer (sudoers process)]
@@ -19,7 +20,7 @@
       (println data))))
 
 (defn generate [{:keys [f t]}]
-  (spit t (create-sudoers f)))
+  (spit t (create-sudoers (load-spec f))))
 
 (def cli
   {:app {:command     "grant"
