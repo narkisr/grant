@@ -40,7 +40,7 @@
   (w/postwalk
    (fn [v]
      (match [v]
-       [[:cmnd-alias name cmds]] [(str "Cmnd_Alias " name " = \\ \n ") (join ", \\ \n " (flatten cmds))]
+       [[:cmnd-alias name cmds]] [(str "Cmnd_Alias " name " = \\ \n ") (join ", \\ \n  " (flatten cmds))]
        [[[:sha sha] [:digest digest] file & r]] [(str sha ":" digest " " file " " (join " " r))]
        [[:directory directory]] directory
        [[:file file]] file
