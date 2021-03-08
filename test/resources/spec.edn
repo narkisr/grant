@@ -3,20 +3,21 @@
 
   {:default #{["ignore_unknown_defaults" true]}}
 
-  {:group :service
-   :binary "/usr/sbin/service"
+  {:binary "/usr/sbin/service"
+   :group :service
    :args [#{[:arg "ssh"] [:arg "docker-compose@elasticsearch"]}
           #{[:arg "stop"] [:arg "start"] [:arg "restart"] [:arg "status"]}]}
 
-  {:group :virtual
-   :binary "/usr/bin/lxd"
+  {:binary "/usr/bin/lxd"
+   :group :virtual
    :args [[:arg "init"] [:flag "--auto"]]}
 
-  {:group :package
-   :binary "/usr/bin/dpkg" :args [[:flag "-i"] #{[:file "bat_0.12.1_amd64.deb"] [:file "osquery_3.3.2_1.linux.amd64.deb"]}]}
+  {:binary "/usr/bin/dpkg"
+   :group :package
+   :args [[:flag "-i"] #{[:file "bat_0.12.1_amd64.deb"] [:file "osquery_3.3.2_1.linux.amd64.deb"]}]}
 
-  {:group :package
-   :binary "/usr/bin/apt-get"
+  {:binary "/usr/bin/apt-get"
+   :group :package
    :args [[:arg "install"] #{[:arg "rlwrap"] [:arg "pwgen"] [:arg "curl"]} [:flag "-y"]]}
 
   {:group :exec :binary "/usr/sbin/visudo"}
