@@ -45,15 +45,19 @@
      [:file "bat_0.12.1_amd64.deb"]]]])
 
 (def user-spec-ast
-  [:user-spec
-   [[:user "re-ops"]]
-   [[:host [:hostname "ALL"]]]
-   [[[:tags [[:tag "NOPASSWD"]]] [[:alias-name "PACKAGE"] [:alias-name "VIRTUAL"]]]]])
+  '([:user-spec
+     [[:user "%wheel"]]
+     [[:host [:hostname "ALL"]]]
+     [[[:tags [[:tag "EXEC"]]] [[:alias-name "EXEC"]]]]]
+    [:user-spec
+     [[:user "re-ops"]]
+     [[:host [:hostname "ALL"]]]
+     [[[:tags [[:tag "NOPASSWD"]]]
+       [[:alias-name "PACKAGE"] [:alias-name "VIRTUAL"]]]]]))
 
 (defn find-in [f in]
-  (first
-   (filter
-    (fn [v] (and (vector? v) (f v))) in)))
+  (filter
+   (fn [v] (and (vector? v) (f v))) in))
 
 (defn clear-digest [[cmnd name commands]]
   [cmnd name
@@ -63,5 +67,5 @@
 
 (deftest basic-spec
   (let [generated (generate (load-spec (edn/read-string (slurp "test/resources/spec.edn"))))]
-    (is (= (clear-digest (find-in (fn [v] (= (second v) "PACKAGE")) generated)) package-ast))
-    (is (= (find-in (fn [v] (= :user-spec (first v))) generated) user-spec-ast))))
+    (is (= package-ast (clear-digest (first (find-in (fn [v] (= (second v) "PACKAGE")) generated)))))
+    (is (= user-spec-ast (find-in (fn [v] (= :user-spec (first v))) generated)))))
