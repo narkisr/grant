@@ -20,6 +20,10 @@
    :group :package
    :args [[:arg "install"] #{[:arg "rlwrap"] [:arg "pwgen"] [:arg "curl"]} [:flag "-y"]]}
 
+  {:binary "/usr/bin/apt-get"
+   :group :package
+   :args [#{[:arg "update"] [:arg "upgrade"]}]}
+
   {:binary "/usr/sbin/visudo" :group :exec}
 
   {:user "re-ops" :groups #{:virtual :package} :tags #{"NOPASSWD"}}

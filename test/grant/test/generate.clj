@@ -11,6 +11,12 @@
    "PACKAGE"
    [[[:sha "sha256"]
      [:digest ""]
+     [:file "/usr/bin/apt-get"] [:arg "update"]]
+    [[:sha "sha256"]
+     [:digest ""]
+     [:file "/usr/bin/apt-get"] [:arg "upgrade"]]
+    [[:sha "sha256"]
+     [:digest ""]
      [:file "/usr/bin/apt-get"]
      [:arg "install"]
      [:arg "pwgen"]
