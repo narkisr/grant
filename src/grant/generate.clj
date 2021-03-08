@@ -32,7 +32,7 @@
         :else [:equals [:identifier k] [:value [:string v]]])) default)])
 
 (defn user-spec-ast
-  "convert user to AST form"
+  "Convert user to AST form"
   [{:keys [user groups tags]}]
   [:user-spec
    [[:user user]]
@@ -41,9 +41,13 @@
 
 (defn command-alias-ast
   "Create aliases AST's"
-  [{:keys [group binary args]}]
+  [[group commands]]
   [:cmnd-alias (group-name group)
-   (args-ast [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]] args)])
+   (reduce
+    (fn [acc {:keys [binary args]}]
+      (if-not args
+        (conj acc [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]])
+        (apply conj acc (args-ast [[:sha "sha256"] [:digest (sha-256 (as-file binary))] [:file binary]] args)))) [] commands)])
 
 (defn generate [spec]
   (into [:sudoers]
@@ -53,13 +57,16 @@
          (map user-spec-ast (users spec)))))
 
 (defn string-form [output]
-  (clojure.string/join "\n\n" (map clojure.string/join output)))
+  (clojure.string/join "\n\n" (map (partial clojure.string/join " ") output)))
 
 (defn create-sudoers [spec]
   (string-form (rest (emit (generate spec)))))
 
 (comment
-  (def spec (load-spec "test/resources/spec.edn"))
+  (require '[grant.spec :refer [load-spec]])
+  (def spec (load-spec (clojure.edn/read-string (slurp "test/resources/spec.edn"))))
   (println (create-sudoers spec))
-  (println (clojure.string/join "\n\n" (map (partial clojure.string/join "") (rest (emit (generate-spec spec)))))))
+  (println (string-form (rest (emit (generate spec)))))
+  (emit [:sudoers [:default [[:identifier "noexec"]]]])
+  (println (clojure.string/join "\n\n" (map (partial clojure.string/join " ") (rest (emit (generate spec)))))))
 

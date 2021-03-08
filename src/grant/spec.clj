@@ -1,5 +1,5 @@
 (ns grant.spec
-  "Spec into datoms"
+  "Converting spec EDN into a datascript instance we query"
   (:require
    [clojure.math.combinatorics :refer (cartesian-product)]
    [com.rpl.specter :refer (ALL transform cond-path must keypath)]
@@ -58,11 +58,16 @@
   (all db (d/q '[:find ?e :where [?e :user _]] db)))
 
 (defn commands [db]
-  (all db (d/q '[:find ?g :where [?g :group _]] db)))
+  (group-by :group (all db (d/q '[:find ?g :where [?g :group _]] db))))
+
+(defn defaults [db]
+  (all db (d/q '[:find ?e :where [?e :default _]] db)))
 
 (comment
-  (def spec (load-spec "test/resources/spec.edn"))
+  (def edn (clojure.edn/read-string (slurp "test/resources/spec.edn")))
+  (def spec (load-spec edn))
   (commands spec)
+  (defaults spec)
   (user-groups "re-ops" spec)
   (filter (partial missing-group? spec) (user-groups "re-ops" spec))
   (services spec))

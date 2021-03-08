@@ -3,17 +3,23 @@
 
   {:default #{["ignore_unknown_defaults" true]}}
 
-  {:group :service :binary "/usr/sbin/service"
-    :args [#{[:arg "ssh"] [:arg "docker-compose@elasticsearch"]}
-           #{[:arg "stop"] [:arg "start"] [:arg "restart"] [:arg "status"]}]}
+  {:group :service 
+   :binary "/usr/sbin/service"
+   :args [#{[:arg "ssh"] [:arg "docker-compose@elasticsearch"]}
+          #{[:arg "stop"] [:arg "start"] [:arg "restart"] [:arg "status"]}]}
 
-  {:group :virtual :binary "/usr/bin/lxd"
-    :args [[:arg "init"] [:flag "--auto"]]}
+  {:group :virtual 
+   :binary "/usr/bin/lxd"
+   :args [[:arg "init"] [:flag "--auto"]]}
 
-  {:group :package :binary "/usr/bin/dpkg"
-    :args [[:flag "-i"] #{[:file "bat_0.12.1_amd64.deb"] [:file "osquery_3.3.2_1.linux.amd64.deb"]} ]}
+  {:group :package
+   :binary "/usr/bin/dpkg" :args [[:flag "-i"] #{[:file "bat_0.12.1_amd64.deb"] [:file "osquery_3.3.2_1.linux.amd64.deb"]} ]}
 
-  {:group :exec :binary "/usr/sbin/visudo" }
+  {:group :package
+   :binary "/usr/bin/apt-get"
+   :args [[:arg "install"] #{[:arg "bat_0.12.1_amd64.deb"] [:arg "osquery_3.3.2_1.linux.amd64.deb"]} [:flag "-y"]]}
+
+  {:group :exec :binary "/usr/sbin/visudo"}
 
   {:user "re-ops" :groups #{:virtual} :tags #{"NOPASSWD"}}
 
