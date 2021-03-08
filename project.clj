@@ -35,6 +35,8 @@
      [com.rpl/specter "1.1.3"]
      
      [datascript "1.0.1"]
+
+     [eftest "0.5.9"]
   ]
 
   :profiles {

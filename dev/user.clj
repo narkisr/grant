@@ -1,6 +1,7 @@
 (ns user
   (:refer-clojure :exclude  [update list])
   (:require
+   [eftest.runner :as eft]
    [clojure.tools.namespace.repl :refer (refresh refresh-all)]
    [clojure.test]))
 
@@ -21,19 +22,8 @@
   (stop)
   (refresh :after 'user/go))
 
-(defn require-tests []
-  (require
-   'grant.test.emit
-   'grant.test.extract
-   'grant.test.generate
-   'grant.test.parsing))
-
-(defn run-tests []
-  (clojure.test/run-tests
-   'grant.test.extract
-   'grant.test.generate
-   'grant.test.emit
-   'grant.test.parsing))
+(defn run-test []
+  (eft/run-tests (eft/find-tests "test") {:multithread? false}))
 
 (defn history
   ([]
