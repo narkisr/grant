@@ -3,7 +3,7 @@
   (:require
    [digest :refer [sha-256]]
    [grant.emit :refer [emit]]
-   [grant.spec :refer [users commands]]
+   [grant.spec :refer [users commands defaults]]
    [clojure.java.io :refer [as-file]]))
 
 (defn arg-ast [[k v]]
@@ -19,6 +19,17 @@
   "convert a groups spec into an alias ast form"
   [groups]
   (mapv (fn [a] [:alias-name (group-name a)]) groups))
+
+(defn default-spec-ast
+  "Convert default entry to AST form"
+  [{:keys [default]}]
+  [:default
+   (mapv
+    (fn [[k v]]
+      (cond
+        (= v true) [:identifier k]
+        (= v false) [:not [:identifier k]]
+        :else [:equals [:identifier k] [:value [:string v]]])) default)])
 
 (defn user-spec-ast
   "convert user to AST form"
@@ -37,6 +48,7 @@
 (defn generate [spec]
   (into [:sudoers]
         (concat
+         (map default-spec-ast (defaults spec))
          (map command-alias-ast (commands spec))
          (map user-spec-ast (users spec)))))
 

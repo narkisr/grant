@@ -1,7 +1,7 @@
 #{
-  {:default "nonexec"}
+  {:default #{["noexec" true]}}
 
-  {:default "ignore_unknown_defaults"}
+  {:default #{["ignore_unknown_defaults" true]}}
 
   {:group :service :binary "/usr/sbin/service"
     :args [#{[:arg "ssh"] [:arg "docker-compose@elasticsearch"]}
