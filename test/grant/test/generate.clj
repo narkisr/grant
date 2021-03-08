@@ -13,13 +13,19 @@
      [:digest ""]
      [:file "/usr/bin/apt-get"]
      [:arg "install"]
-     [:arg "bat_0.12.1_amd64.deb"]
+     [:arg "pwgen"]
      [:flag "-y"]]
     [[:sha "sha256"]
      [:digest ""]
      [:file "/usr/bin/apt-get"]
      [:arg "install"]
-     [:arg "osquery_3.3.2_1.linux.amd64.deb"]
+     [:arg "rlwrap"]
+     [:flag "-y"]]
+    [[:sha "sha256"]
+     [:digest ""]
+     [:file "/usr/bin/apt-get"]
+     [:arg "install"]
+     [:arg "curl"]
      [:flag "-y"]]
     [[:sha "sha256"]
      [:digest ""]
@@ -36,7 +42,7 @@
   [:user-spec
    [[:user "re-ops"]]
    [[:host [:hostname "ALL"]]]
-   [[[:tags [[:tag "NOPASSWD"]]] [[:alias-name "VIRTUAL"]]]]])
+   [[[:tags [[:tag "NOPASSWD"]]] [[:alias-name "PACKAGE"] [:alias-name "VIRTUAL"]]]]])
 
 (defn find-in [f in]
   (first

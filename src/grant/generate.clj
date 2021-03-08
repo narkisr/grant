@@ -65,8 +65,6 @@
 (comment
   (require '[grant.spec :refer [load-spec]])
   (def spec (load-spec (clojure.edn/read-string (slurp "test/resources/spec.edn"))))
-  (println (create-sudoers spec))
-  (println (string-form (rest (emit (generate spec)))))
-  (emit [:sudoers [:default [[:identifier "noexec"]]]])
-  (println (clojure.string/join "\n\n" (map (partial clojure.string/join " ") (rest (emit (generate spec)))))))
+  (spit "/tmp/sudoer"  (create-sudoers spec))
+  (println (string-form (rest (emit (generate spec))))))
 
