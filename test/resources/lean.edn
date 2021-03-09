@@ -1,0 +1,37 @@
+#{
+  {:default #{["noexec" true]}}
+
+  {:default #{["ignore_unknown_defaults" true]}}
+
+  {:binary "/usr/bin/setfacl"
+   :group :access
+   :args [[:flag "-R"] [:flag "-m"] [:arg "u:re-ops:rwx"]
+          #{[:arg "/opt/"] [:arg "/usr/local/bin/"] [:arg "/usr/src/"] [:arg "/usr/share/keyrings/"]
+            [:arg "/etc/apt/sources.list.d/"] [:arg "/etc/security/limits.d/"] [:arg "/etc/modprobe.d/"]}]}
+
+  {:binary "/usr/bin/chown"
+   :group :access
+   :args [#{[:arg "/home/re-ops/.zshrc"] [:arg "/home/re-ops/.ackrc"] [:arg "/home/re-ops/.inputrc"] [:arg "/home/re-ops/.tmux.conf"]} [:arg "re-ops:re-ops"]]}
+
+  {:binary "/usr/bin/chown"
+   :group :access
+   :args [#{[:arg "/home/re-ops/.dots"]} [:arg "re-ops:re-ops"] [:flag "-R"]]}
+
+  {:binary "/usr/bin/chmod"
+   :group :access
+   :args [#{[:arg "/usr/local/bin/tmx"]} [:flag "R"]]}
+
+  {:binary "/usr/bin/chsh"
+   :group :shell
+   :args [[:flag "-s"] [:arg "/usr/bin/zsh"]]}
+
+  {:binary "/usr/bin/apt-get"
+   :group :package
+   :args [[:arg "install"] #{[:arg "zsh"] [:arg "git"] [:arg "tmux"] [:arg "ack"] [:arg "rlwrap"]} [:flag "-y"]]}
+
+  {:binary "/usr/bin/dpkg"
+   :group :package
+   :args [[:flag "-i"] #{[:file "fd_7.4.0_amd64.deb"]}]}
+
+  {:user "re-ops" :groups #{:package :shell :access} :tags #{"NOPASSWD"}}
+}
