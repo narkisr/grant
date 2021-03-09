@@ -33,7 +33,7 @@
      [org.clojure/math.combinatorics "0.1.6"]
 
      [com.rpl/specter "1.1.3"]
-     
+
      [datascript "1.0.1"]
 
      [eftest "0.5.9"]
