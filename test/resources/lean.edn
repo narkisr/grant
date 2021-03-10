@@ -5,21 +5,21 @@
 
   {:binary "/usr/bin/setfacl"
    :group :access
-   :args [[:flag "-R"] [:flag "-m"] [:arg "u:re-ops:rwx"]
+   :args [[:flag "-R"] [:flag "-m"] [:arg "u\\:re-ops\\:rwx"]
           #{[:arg "/opt/"] [:arg "/usr/local/bin/"] [:arg "/usr/src/"] [:arg "/usr/share/keyrings/"]
             [:arg "/etc/apt/sources.list.d/"] [:arg "/etc/security/limits.d/"] [:arg "/etc/modprobe.d/"]}]}
 
   {:binary "/usr/bin/chown"
    :group :access
-   :args [#{[:arg "/home/re-ops/.zshrc"] [:arg "/home/re-ops/.ackrc"] [:arg "/home/re-ops/.inputrc"] [:arg "/home/re-ops/.tmux.conf"]} [:arg "re-ops:re-ops"]]}
+   :args [#{[:arg "/home/re-ops/.zshrc"] [:arg "/home/re-ops/.ackrc"] [:arg "/home/re-ops/.inputrc"] [:arg "/home/re-ops/.tmux.conf"]} [:arg "re-ops\\:re-ops"]]}
 
   {:binary "/usr/bin/chown"
    :group :access
-   :args [#{[:arg "/home/re-ops/.dots"]} [:arg "re-ops:re-ops"] [:flag "-R"]]}
+   :args [#{[:arg "/home/re-ops/.dots"]} [:arg "re-ops\\:re-ops"] [:flag "-R"]]}
 
   {:binary "/usr/bin/chmod"
    :group :access
-   :args [#{[:arg "/usr/local/bin/tmx"]} [:flag "R"]]}
+   :args [#{[:arg "/usr/local/bin/tmx"]} [:flag "-R"]]}
 
   {:binary "/usr/bin/chsh"
    :group :shell
