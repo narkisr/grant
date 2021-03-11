@@ -48,6 +48,7 @@
        [[:runas-spec [:runas-list & items]]] [:runas items]
        [[:tag-spec & tags]] [:tags tags]
        [[:runas-member [:alias-name alias-name]]] [:alias-name alias-name]
+       [[:cmnd-list & commands]] commands
        [[:cmnd [:commandname & commands]]] commands
        [[:cmnd [:alias-name alias-name]]] [[:alias-name alias-name]]
        [[:cmnd "!" cmd]] [[:not cmd]]
