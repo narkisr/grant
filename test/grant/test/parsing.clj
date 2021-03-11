@@ -42,30 +42,31 @@
           [:user-alias "SUPPORT" ["marge" "moe"]]])))
 
 (deftest host-aliases
-  (is (= (process (sudoers (slurp "test/resources/hosts-aliases")))
-         [:sudoers
+  (is (= [:sudoers
           [:host-alias "PROD" [[:hostname "server-1"] [:hostname "server-2"] [:hostname "server-3"]]]
-          [:host-alias "NETWORKS" [[:ip-addr "192.168.2.122"] [:network "192.168.1.1/23"]]]])))
+          [:host-alias "NETWORKS" [[:ip-addr "192.168.2.122"] [:network "192.168.1.1/23"]]]]
+         (process (sudoers (slurp "test/resources/hosts-aliases"))))))
 
 (deftest single-line-no-passwd
-  (is (= (process (sudoers (slurp "test/resources/single-line-no-passwd")))
-         [:sudoers
+  (is (= [:sudoers
           [:user-spec
            [[:user "re-ops"] [:user "foo"]]
            [[:host [:hostname "ALL"]]]
-           [[[:runas [[:alias-name "ALL"] [:alias-name "ADMINS"]]] [:tags [[:tag "NOPASSWD"] [:tag "EXEC"]]] [[:file "/usr/bin/apt"] [:arg "update"]]]
-            [[:file "/usr/bin/apt"] [:arg "upgrade"] [:flag "-y"]]
-            [[:file "/usr/bin/purge-kernels"]]
-            [[:file "/usr/bin/apt-cleanup"]]
-            [[:file "/usr/bin/apt-get"] [:arg "install"] [:wildcard "*"] [:flag "-y"]]
-            [[:file "/usr/sbin/ufw"] [:arg "status"]]
-            [[:file "/usr/bin/nmap"] [:wildcard "*"]]
-            [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]
-            [[:directory "/usr/bin/"]]]]])))
+           [[[:runas [[:alias-name "ALL"] [:alias-name "ADMINS"]]]
+             [:tags [[:tag "NOPASSWD"] [:tag "EXEC"]]]
+             [[[:file "/usr/bin/apt"] [:arg "update"]]
+              [[:file "/usr/bin/apt"] [:arg "upgrade"] [:flag "-y"]]
+              [[:file "/usr/bin/purge-kernels"]]
+              [[:file "/usr/bin/apt-cleanup"]]
+              [[:file "/usr/bin/apt-get"] [:arg "install"] [:wildcard "*"] [:flag "-y"]]
+              [[:file "/usr/sbin/ufw"] [:arg "status"]]
+              [[:file "/usr/bin/nmap"] [:wildcard "*"]]
+              [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]
+              [[:directory "/usr/bin/"]]]]]]]
+         (process (sudoers (slurp "test/resources/single-line-no-passwd"))))))
 
 (deftest defaults
-  (is (= (process (sudoers (slurp "test/resources/defaults")))
-         [:sudoers
+  (is (= [:sudoers
           [:default [[:equals [:identifier "exempt_group"] [:value [:user "re-ops"]]]]]
           [:default [[:not [:identifier "env_reset"]] [:subtract [:identifier "env_delete"] [:value [:environment "PATH"]]]]]
           [:default [[:add [:identifier "syslog"] [:value [:user "auth"]]]]]
@@ -73,11 +74,11 @@
           [:default/user-alias "FULLTIMERS" [[:not [:identifier "lecture"]]]]
           [:default/user "millert" [[:not [:identifier "authenticate"]]]]
           [:default/servers "SERVERS" [[[:identifier "log_year"]] [:equals [:identifier "logfile"] [:value [:file "/var/log/sudo.log"]]]]]
-          [:default/cmnd-alias "PAGERS" [[[:identifier "noexec"]]]]])))
+          [:default/cmnd-alias "PAGERS" [[[:identifier "noexec"]]]]]
+         (process (sudoers (slurp "test/resources/defaults"))))))
 
 (deftest combined
-  (is (= (process (sudoers (slurp "test/resources/combined")))
-         [:sudoers
+  (is (= [:sudoers
           [:default [[:equals [:identifier "exempt_group"] [:value [:user "re-ops"]]]]]
           [:default/cmnd-alias "PAGERS" [[[:identifier "noexec"]]]]
           [:cmnd-alias "C_PIPES" [[[:file "/usr/bin/tee"] [:wildcard "*"]] [[:file "/usr/bin/tee"] [:flag "-a"] [:wildcard "*"]]]]
@@ -87,12 +88,15 @@
           [:user-spec
            [[:user "re-ops"]]
            [[:host [:hostname "ALL"]]]
-           [[[:runas [[:alias-name "ALL"]]] [:tags [[:tag "NOPASSWD"]]] [[:file "/usr/bin/apt"] [:arg "update"]]]
-            [[:file "/usr/bin/apt"] [:arg "upgrade"] [:flag "-y"]]
-            [[:file "/usr/bin/purge-kernels"]]
-            [[:file "/usr/bin/apt-cleanup"]]
-            [[:file "/usr/bin/apt-get"] [:arg "install"] [:wildcard "*"] [:flag "-y"]]
-            [[:file "/usr/sbin/ufw"] [:arg "status"]]
-            [[:file "/usr/bin/nmap"] [:wildcard "*"]]
-            [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]
-            [[:not [:alias-name "C_PIPES"]]]]]])))
+           [[[:runas [[:alias-name "ALL"]]]
+             [:tags [[:tag "NOPASSWD"]]]
+             [[[:file "/usr/bin/apt"] [:arg "update"]]
+              [[:file "/usr/bin/apt"] [:arg "upgrade"] [:flag "-y"]]
+              [[:file "/usr/bin/purge-kernels"]]
+              [[:file "/usr/bin/apt-cleanup"]]
+              [[:file "/usr/bin/apt-get"] [:arg "install"] [:wildcard "*"] [:flag "-y"]]
+              [[:file "/usr/sbin/ufw"] [:arg "status"]]
+              [[:file "/usr/bin/nmap"] [:wildcard "*"]]
+              [[:file "/usr/bin/netstat"] [:flag "-tnpa"]]
+              [[:not [:alias-name "C_PIPES"]]]]]]]]
+         (process (sudoers (slurp "test/resources/combined"))))))
