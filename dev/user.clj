@@ -22,8 +22,11 @@
   (stop)
   (refresh :after 'user/go))
 
-(defn run-test []
-  (eft/run-tests (eft/find-tests "test") {:multithread? false}))
+(defn run-test
+  ([]
+   (run-test "test"))
+  ([path]
+    (eft/run-tests (eft/find-tests path) {:multithread? false})))
 
 (defn history
   ([]
