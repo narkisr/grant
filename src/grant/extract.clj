@@ -1,7 +1,8 @@
 (ns grant.extract
   "Extract information from the parsed sudoer files"
   (:require
-   [meander.epsilon :as m]))
+   [meander.epsilon :as m]
+   [meander.strategy.epsilon :as s]))
 
 (defn folder-violations
   "Full folder access enabled in user spec or command alias, this is a violation of Rule 1"
@@ -10,7 +11,7 @@
         (m/search m
                   (m/$ [:cmnd-alias ?alias-name (m/scan (m/pred (fn [[[k _] & rs]] (and (empty? rs) (= k :directory))) ?command))])
                   {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-1}
-                  (m/$ [:user-spec ?users ?hosts (m/scan (m/pred (fn [[[k _] & rs]] (and (empty? rs) (= k :directory))) ?command))])
+                  (m/$ [:user-spec ?users ?hosts (m/$ [_ ... [:directory _] :as ?command])])
                   {:type :cmnd-alias :users ?users :command ?command :violation :rule-1})))
 
 (defn wildcard-violations
@@ -21,8 +22,7 @@
                   (m/$ [:cmnd-alias ?alias-name
                         (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
                   {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-2}
-                  (m/$ [:user-spec ?users ?hosts
-                        (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
+                  (m/$ [:user-spec ?users ?hosts (m/$ [_ ... [:wildcard _] :as ?command])])
                   {:type :user-spec :users ?users :hosts ?hosts :command ?command :violation :rule-2})))
 
 (defn nopasswd-violations
@@ -43,7 +43,7 @@
   (into #{}
         (m/search m
                   (m/$ [:user-spec [[:user ?user]] ?host
-                        (m/scan (m/pred (partial some (fn [[k v]] (and (= k :not) (= (first v) :alias-name)))) ?command))])
+                        (m/$ [_ ... [:not [:alias-name _]] :as ?command])])
                   {:type :cmnd-alias :user ?user :command ?command :violation :rule-4})))
 
 (defn search [ast]

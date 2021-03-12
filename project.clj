@@ -18,7 +18,7 @@
      [cli-matic "0.3.11"]
 
      ; rules
-     [meander/epsilon "0.0.421"]
+     [meander/epsilon "0.0.602"]
 
      ; emit
      [org.clojure/core.match "1.0.0"]
