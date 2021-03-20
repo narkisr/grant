@@ -23,7 +23,8 @@
 
 (defn cmd-emit [cmd]
   (match cmd
-    [tags runas cmnd-list] (join " " [tags runas (join ", " (map (partial join " ") cmnd-list))])
+    [a b cmnd-list] (join " " [a b (join ", " (map (partial join " ") cmnd-list))])
+    [a cmnd-list] (join " " [a (join ", " (map (partial join " ") cmnd-list))])
     [cmnd-list] (join ", " (map (partial join " ") cmnd-list))))
 
 (defn emit-user-spec [ast]

@@ -35,6 +35,22 @@
             [:user-spec
              [[:user "re-ops"] [:user "me"]]
              [[:host [:hostname "ALL"]] [:host [:hostname "bar"]]]
+             [[[:runas [[:alias "ALL"]]]
+               [:tags [[:tag "NOPASSWD"] [:tag "EXEC"]]]
+               [:cmnd-list
+                [[:file "/usr/bin/apt"] [:arg "update"]]]]
+              [[:tags [[:tag "EXEC"]]]
+               [:cmnd-list
+                [[:file "/usr/sbin/ufw"] [:arg "status"]]
+                [[:directory "/usr/bin/"]]]]]]]))
+         ["re-ops,me" "ALL,bar" "=" "(ALL)  NOPASSWD:EXEC: /usr/bin/apt update , EXEC: /usr/sbin/ufw status, /usr/bin/"]))
+
+  (is (= (second
+          (emit
+           [:sudoers
+            [:user-spec
+             [[:user "re-ops"] [:user "me"]]
+             [[:host [:hostname "ALL"]] [:host [:hostname "bar"]]]
              [[[:cmnd-list
                 [[:file "/usr/sbin/ufw"] [:arg "status"]]
                 [[:directory "/usr/bin/"]]]]]]]))
