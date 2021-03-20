@@ -26,7 +26,7 @@
   ([]
    (run-test "test"))
   ([path]
-    (eft/run-tests (eft/find-tests path) {:multithread? false})))
+   (eft/run-tests (eft/find-tests path) {:multithread? false})))
 
 (defn history
   ([]
