@@ -21,16 +21,26 @@
        [[:equals f s]]  (str f "=" s)
        :else  v)) ast))
 
+(defn cmd-emit [cmd]
+  (match cmd
+    [tags runas cmnd-list] (join " " [tags runas (join ", " (map (partial join " ") cmnd-list))])
+    [cmnd-list] (join ", " (map (partial join " ") cmnd-list))))
+
 (defn emit-user-spec [ast]
   (w/postwalk
    (fn [v]
      (match [v]
-       [[:user-spec users hosts & [cmds]]] [(join "," (map second users)) (join "," (map (comp second second) hosts)) "=" (join "," (map (comp (partial join " ") flatten) cmds))]
+       [[:user-spec users hosts cmds]]
+       [(join "," (map second users)) (join "," (map second hosts))
+        "="
+        (join " , " (map cmd-emit cmds))]
        [[:runas & [aliases]]] (str "(" (join "," aliases) ") ")
        [[:tags tags]] (str (join ":" tags) ":")
        [[:tag tag]] tag
+       [[:cmnd-list & commands]] commands
        [[:file file]] file
        [[:arg arg]] arg
+       [[:host host]] host
        [[:alias alias-name]] alias-name
        [[:alias-name alias-name]] alias-name
        [[:directory directory]] directory
@@ -40,6 +50,7 @@
   (w/postwalk
    (fn [v]
      (match [v]
+       [[:user-spec _ _ _]] (emit-user-spec v)
        [[:cmnd-alias name cmds]] [(str "Cmnd_Alias " name " = \\ \n ") (join ", \\ \n  " (flatten cmds))]
        [[[:sha sha] [:digest digest] file & r]] [(str sha ":" digest " " file " " (join " " r))]
        [[:directory directory]] directory
