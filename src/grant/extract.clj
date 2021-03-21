@@ -46,9 +46,7 @@
         (m/search m
                   (m/$ [:user-spec [[:user ?user]] ?host
                         (m/or
-                         (m/$ [[:not [:alias-name _]] ..1  :as ?command])
-                         (m/$ [_ ..1  [:not [:alias-name _]] :as ?command])
-                         (m/$ [_ ..1 [:not [:alias-name _]] ..1 :as ?command _ ..1]))])
+                         (m/$ [[:not [:alias-name _]] ..1  :as ?command]))])
                   {:type :cmnd-alias :user ?user :command ?command :violation :rule-4})))
 
 (defn search [ast]
