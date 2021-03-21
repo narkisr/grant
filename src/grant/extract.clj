@@ -12,10 +12,7 @@
                   (m/$ [:cmnd-alias ?alias-name (m/scan (m/pred (fn [[[k _] & rs]] (and (empty? rs) (= k :directory))) ?command))])
                   {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-1}
                   (m/$ [:user-spec ?users ?hosts
-                        (m/or
-                         (m/$ [[:directory _] ..1  :as ?command])
-                         (m/$ [_ ..1 [:directory _]  :as ?command])
-                         (m/$ [_ ..1 [:directory _] ..1  _ :as ?command]))])
+                        [[_ ... [:cmnd-list (m/scan (m/scan (m/pred (partial some (fn [k] (= k :directory)))) :as ?command))]]]])
                   {:type :cmnd-alias :users ?users :command ?command :violation :rule-1})))
 
 (defn wildcard-violations
@@ -27,10 +24,7 @@
                         (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))])
                   {:type :cmnd-alias :alias-name ?alias-name :command ?command :violation :rule-2}
                   (m/$ [:user-spec ?users ?hosts
-                        (m/or
-                         (m/$ [[:wildcard _] ..1  :as ?command])
-                         (m/$ [_ ..1 [:wildcard _]  :as ?command])
-                         (m/$ [_ ..1 [:wildcard _] ..1  _ :as ?command]))])
+                        [[_ ... [:cmnd-list (m/scan (m/scan (m/pred (partial some (fn [k] (= k :wildcard)))) :as ?command))]]]])
                   {:type :user-spec :users ?users :hosts ?hosts :command ?command :violation :rule-2})))
 
 (defn nopasswd-violations
@@ -54,7 +48,7 @@
                         (m/or
                          (m/$ [[:not [:alias-name _]] ..1  :as ?command])
                          (m/$ [_ ..1  [:not [:alias-name _]] :as ?command])
-                         (m/$ [_ ..1 [:not [:alias-name _]] ..1  _ :as ?command]))])
+                         (m/$ [_ ..1 [:not [:alias-name _]] ..1 :as ?command _ ..1]))])
                   {:type :cmnd-alias :user ?user :command ?command :violation :rule-4})))
 
 (defn search [ast]
