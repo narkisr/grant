@@ -57,14 +57,11 @@
          ["re-ops,me" "ALL,bar" "=" "/usr/sbin/ufw status, /usr/bin/"])))
 
 (deftest cmnd-aliases
-  (= (second
-      (emit
-       [:sudoers
-        [:cmnd-alias "F"
-         [[[:file "/bin/foo"]]
-          [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
-          [[:directory "/tmp/bla/"]]]]]))
-     ["Cmnd_Alias F = \\ \n"
-      "/bin/foo, \\ \n
-       sha224:9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651 /foo/bar, \\ \n
-       /tmp/bla"]))
+  (is (= (second
+          (emit
+           [:sudoers
+            [:cmnd-alias "F"
+             [[[:file "/bin/foo"]]
+              [[:sha "sha224"] [:digest "9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651"] [:file "/foo/bar"]]
+              [[:directory "/tmp/bla/"]]]]]))
+         ["Cmnd_Alias F = \\ \n " "/bin/foo, \\ \n  sha224:9a9800e318b24f26e19ad81ea7ada2762e978c19128603975707d651 /foo/bar , \\ \n  /tmp/bla/"])))
