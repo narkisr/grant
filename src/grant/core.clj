@@ -1,6 +1,7 @@
 (ns grant.core
   (:gen-class)
   (:require
+   [clojure.spec.alpha :as spec]
    [grant.spec :refer (load-spec)]
    [grant.generate :refer (create-sudoers)]
    [grant.extract :refer (search)]
@@ -22,6 +23,10 @@
 (defn generate [{:keys [f t]}]
   (spit t (create-sudoers (load-spec f))))
 
+(spec/def ::non-empty-file (fn [f] (and (not (nil? f)) (not (= "" (.getPath f))))))
+
+(spec/def ::spec-edn (fn [s] (not (empty? s))))
+
 (def cli
   {:app {:command     "grant"
          :description "Sudoers file analysis and generation"
@@ -31,15 +36,18 @@
 
    :commands    [{:command     "analyse"
                   :description "Parse and extract facts and run analysis rules on top of them reporting security issues"
-                  :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]
+                  :opts        [{:option "f" :as "file" :type :slurp :spec ::non-empty-file}
+                                {:option "p" :as "pretty" :type :flag}]
                   :runs        analyse}
                  {:command     "parse"
-                  :description "Parse the provided file and print its output in an edn format"
-                  :opts        [{:option "f" :as "file" :type :slurp} {:option "p" :as "pretty" :type :flag}]
+                  :description "Parse the provided file and print its output in ast format"
+                  :opts        [{:option "f" :as "file" :type :slurp :spec ::non-empty-file}
+                                {:option "p" :as "pretty" :type :flag}]
                   :runs        parse}
                  {:command     "generate"
-                  :description "Generate a sudoers file from a provide specification"
-                  :opts        [{:option "f" :as "file" :type :ednfile} {:option "t" :as "target" :type :string}]
+                  :description "Generate a sudoers file from a specification"
+                  :opts        [{:option "f" :as "file" :type :ednfile :spec ::spec-edn}
+                                {:option "t" :as "target" :type :string}]
                   :runs        generate}]})
 
 (defn -main [& args]
