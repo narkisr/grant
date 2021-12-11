@@ -37,6 +37,8 @@
      [datascript "1.0.1"]
 
      [eftest "0.5.9"]
+
+     [org.clojure/tools.trace "0.7.11"]
   ]
 
   :profiles {

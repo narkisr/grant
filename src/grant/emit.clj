@@ -2,6 +2,7 @@
   "Generating sudoers file from AST form"
   (:require
    [clojure.core.match :refer [match]]
+   [clojure.tools.trace :as t]
    [clojure.walk :as w]
    [clojure.string :refer (join)]))
 
@@ -21,30 +22,52 @@
        [[:equals f s]]  (str f "=" s)
        :else  v)) ast))
 
-(defn cmd-emit [cmd]
-  (match cmd
-    [a b cmnd-list] (join " " [a b (join ", " (map (partial join " ") cmnd-list))])
-    [a cmnd-list] (join " " [a (join ", " (map (partial join " ") cmnd-list))])
-    [cmnd-list] (join ", " (map (partial join " ") cmnd-list))))
+(defn emit-user-spec-cmd
+  "Emits cmd forms in user specs, a cmd form might be composed from:
+      1. runsas, tags & cmds
+      2. tags & cmds
+      3. & cmds
+  
+   For example:
 
-(defn emit-user-spec [ast]
+    [\"NOPASSWD:\" [[\"PACKAGE\"] [\"VIRTUAL\"]]]
+
+    [\"(ALL) \" \"NOPASSWD:EXEC:\" [[\"/usr/bin/apt\" \"update\"] [\"/usr/sbin/ufw\" \"status\"] [\"/usr/bin/\"]]]
+
+   Each cmd list entry is joined internally.
+  "
+  [cmd]
+  (letfn [(combine-cmds [cmnd-list]
+            (join ", " (map (partial join " ") cmnd-list)))]
+    (match cmd
+      [runas tags cmnd-list] (join " " [runas tags (combine-cmds cmnd-list)])
+      [tags cmnd-list] (join " " [tags (combine-cmds cmnd-list)])
+      [cmnd-list] (combine-cmds cmnd-list))))
+
+(defn emit-user-spec
+  "This emits user-spec forms with the following shape:
+
+     [:sudoers
+        [:user-spec
+           [[:user ...]]
+           [[:host [:hostname ..]]]
+           [[[:tags [[:tag ...]]]
+             [:cmnd-list [[:alias-name ...]] ... ]]]]] "
+  [ast]
   (w/postwalk
    (fn [v]
      (match [v]
-       [[:user-spec users hosts cmds]]
-       [(join "," (map second users)) (join "," (map second hosts))
-        "="
-        (join " , " (map cmd-emit cmds))]
+       [[:user-spec users hosts cmds]] [(join "," (map second users)) (join "," (map second hosts)) "=" (join " , " (map emit-user-spec-cmd cmds))]
        [[:runas & [aliases]]] (str "(" (join "," aliases) ") ")
        [[:tags tags]] (str (join ":" tags) ":")
        [[:tag tag]] tag
-       [[:cmnd-list & commands]] commands
-       [[:file file]] file
-       [[:arg arg]] arg
        [[:host host]] host
-       [[:alias alias-name]] alias-name
-       [[:alias-name alias-name]] alias-name
+       [[:cmnd-list & commands]] commands
+       [[:arg arg]] arg
+       [[:file file]] file
        [[:directory directory]] directory
+       [[:alias alias]] alias ; runas alias
+       [[:alias-name alias-name]] alias-name ; command alias
        :else v)) ast))
 
 (defn emit-cmnd-alias [ast]

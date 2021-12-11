@@ -14,7 +14,28 @@
     (is (= (emit cmnd-default) ["Defaults!PAGERS" "noexec"]))
     (is (= (emit subtract-default) ["Defaults" "!env_reset,env_delete-=PATH"]))))
 
-(deftest user-spec
+(deftest user-spec-aliases
+  (is (= (second
+          (emit
+           [:sudoers
+            [:user-spec
+             [[:user "re-ops"]]
+             [[:host [:hostname "ALL"]]]
+             [[[:tags [[:tag "NOPASSWD"]]]
+               [:cmnd-list [[:alias-name "PACKAGE"]] [[:alias-name "VIRTUAL"]]]]]]]))
+         ["re-ops" "ALL" "=" "NOPASSWD: PACKAGE, VIRTUAL"]))
+
+  (is (= (second
+          (emit
+           [:sudoers
+            [:user-spec
+             [[:user "%wheel"]]
+             [[:host [:hostname "ALL"]]]
+             [[[:tags [[:tag "EXEC"]]]
+               [:cmnd-list [[:alias-name "EXEC"]]]]]]]))
+         ["%wheel" "ALL" "=" "EXEC: EXEC"])))
+
+(deftest user-spec-cmds
   (is (= (second
           (emit
            [:sudoers
