@@ -8,9 +8,9 @@
    :args [#{[:arg "ssh"] [:arg "docker-compose@elasticsearch"]}
           #{[:arg "stop"] [:arg "start"] [:arg "restart"] [:arg "status"]}]}
 
-  {:binary "/usr/bin/lxd"
+  {:binary "/usr/bin/virsh"
    :group :virtual
-   :args [[:arg "init"] [:flag "--auto"]]}
+   :args [[:arg "list"] [:flag "--all"]]}
 
   {:binary "/usr/bin/dpkg"
    :group :package

@@ -3,6 +3,7 @@
   (:require
    [clojure.edn :as edn]
    [grant.generate :refer [generate]]
+   [clojure.set :refer (difference)]
    [grant.spec :refer [load-spec]]
    [clojure.test :refer :all]))
 
@@ -48,12 +49,12 @@
   '([:user-spec
      [[:user "%wheel"]]
      [[:host [:hostname "ALL"]]]
-     [[[:tags [[:tag "EXEC"]]] [[:alias-name "EXEC"]]]]]
+     [[[:tags [[:tag "EXEC"]]] [:cmnd-list [[:alias-name "EXEC"]]]]]]
     [:user-spec
      [[:user "re-ops"]]
      [[:host [:hostname "ALL"]]]
      [[[:tags [[:tag "NOPASSWD"]]]
-       [[:alias-name "PACKAGE"] [:alias-name "VIRTUAL"]]]]]))
+       [:cmnd-list [[:alias-name "PACKAGE"]] [[:alias-name "VIRTUAL"]]]]]]))
 
 (defn find-in [f in]
   (filter
@@ -66,6 +67,7 @@
       (mapv (fn [[k v]] (if (= k :digest) [:digest ""] [k v])) cmd)) commands)])
 
 (deftest basic-spec
-  (let [generated (generate (load-spec (edn/read-string (slurp "test/resources/spec.edn"))))]
-    (is (= package-ast (clear-digest (first (find-in (fn [v] (= (second v) "PACKAGE")) generated)))))
+  (let [generated (generate (load-spec (edn/read-string (slurp "test/resources/spec.edn"))))
+        actual-package-ast (clear-digest (first (find-in (fn [v] (= (second v) "PACKAGE")) generated)))]
+    (is (empty? (difference (set (package-ast 2)) (set (actual-package-ast 2)))))
     (is (= user-spec-ast (find-in (fn [v] (= :user-spec (first v))) generated)))))

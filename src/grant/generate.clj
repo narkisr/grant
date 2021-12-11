@@ -18,7 +18,7 @@
 (defn alias-ast
   "convert a groups spec into an alias ast form"
   [groups]
-  (mapv (fn [a] [:alias-name (group-name a)]) groups))
+  (mapv (fn [a] [[:alias-name (group-name a)]]) groups))
 
 (defn default-spec-ast
   "Convert default entry to AST form"
@@ -37,7 +37,7 @@
   [:user-spec
    [[:user user]]
    [[:host [:hostname "ALL"]]]
-   [[[:tags (mapv (fn [t] [:tag t]) tags)] (alias-ast groups)]]])
+   [[[:tags (mapv (fn [t] [:tag t]) tags)] (into [:cmnd-list] (alias-ast groups))]]])
 
 (defn command-alias-ast
   "Create aliases AST's"
